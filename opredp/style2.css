@@ -1,0 +1,148 @@
+/* Import font monospaced dari Google Fonts */
+@import url('https://fonts.googleapis.com/css2?family=Fira+Code:wght@400;600&display=swap');
+
+/* --- Variabel Warna & Font --- */
+:root {
+    --bg-color: #0d1117;          /* Latar belakang (GitHub Dark) */
+    --primary-glow: #00ffc3;      /* Warna neon utama */
+    --secondary-glow: #00aaff;    /* Warna neon sekunder */
+    --border-color: rgba(0, 255, 195, 0.2);
+    --card-bg: rgba(0, 255, 195, 0.03);
+    --font-main: 'Fira Code', monospace;
+    --text-color: #c9d1d9;
+    --label-color: #8b949e;
+}
+
+/* --- Tampilan Umum & Latar Belakang --- */
+body {
+    background-color: var(--bg-color);
+    font-family: var(--font-main);
+    color: var(--text-color);
+}
+
+/* --- Judul & Struktur Grup --- */
+.page-title {
+    color: var(--primary-glow);
+    font-weight: 600;
+    text-shadow: 0 0 5px var(--primary-glow), 0 0 10px var(--primary-glow);
+    letter-spacing: 2px;
+}
+
+.cursor {
+    animation: blink 1s step-end infinite;
+}
+
+@keyframes blink { 50% { opacity: 0; } }
+
+.monitoring-group {
+    margin-bottom: 2.5rem;
+    padding-top: 1rem;
+    border-top: 1px solid var(--border-color);
+}
+
+.group-title {
+    color: var(--secondary-glow);
+    font-size: 1.25rem;
+    margin-bottom: 1.5rem;
+    letter-spacing: 1px;
+}
+
+/* --- Style Kartu Monitoring --- */
+.stat-card {
+    background-color: transparent;
+    border: 1px solid var(--border-color);
+    border-radius: 4px; /* Sedikit lengkungan agar tidak terlalu kaku */
+    position: relative;
+    overflow: hidden;
+    transition: all 0.3s ease;
+    background-image: radial-gradient(circle at top left, var(--card-bg) 0%, transparent 50%);
+}
+
+/* Efek garis pendar di atas kartu */
+.stat-card::before {
+    content: '';
+    position: absolute;
+    top: 0;
+    left: -100%;
+    width: 100%;
+    height: 2px;
+    background: linear-gradient(90deg, transparent, var(--primary-glow));
+    transition: left 0.5s ease;
+}
+
+.stat-card:hover {
+    background-color: var(--card-bg);
+    border-color: rgba(0, 255, 195, 0.5);
+    transform: translateY(-5px);
+    box-shadow: 0 5px 20px rgba(0, 255, 195, 0.1);
+}
+
+.stat-card:hover::before {
+    left: 100%; /* Animasi garis bergerak saat hover */
+}
+
+.stat-card .card-body {
+    display: flex;
+    align-items: center;
+    padding: 1rem 1.25rem;
+}
+
+/* --- Ikon & Teks di Dalam Kartu --- */
+.card-icon {
+    font-size: 2rem;
+    color: var(--primary-glow);
+    text-shadow: 0 0 8px var(--primary-glow);
+    margin-right: 1rem;
+}
+
+.info-text {
+    line-height: 1.2;
+}
+
+.text-label {
+    color: var(--label-color);
+    font-size: 0.75rem;
+    text-transform: uppercase;
+    letter-spacing: 0.5px;
+    margin-bottom: 0.25rem;
+}
+
+.data-value {
+    color: #ffffff;
+    font-size: 1.5rem;
+    font-weight: 600;
+    margin-bottom: 0;
+}
+/* -- GAYA DASAR KARTU MONITORING -- */
+.stat-card {
+    background-color: #2c3e50; /* Warna dasar kartu (sesuaikan jika perlu) */
+    border: 1px solid #4a6fa5;
+    border-radius: 8px;
+    transition: all 0.3s ease; /* Transisi halus untuk semua perubahan */
+    /* Hapus border-left agar digantikan oleh glow */
+}
+
+/* -- DANGER STATE (Value > 0) -- */
+.stat-card.card-danger {
+    border-color: #e53935; /* Border Merah Tegas */
+    box-shadow: 0 0 15px rgba(229, 57, 53, 0.6); /* EFEK GLOW MERAH */
+}
+
+.stat-card.card-danger .card-icon,
+.stat-card.card-danger .data-value,
+.stat-card.card-danger .text-label {
+    color: #ef5350; /* Warna Ikon & Teks Merah Terang */
+}
+
+
+/* -- SUCCESS STATE (Value = 0) -- */
+.stat-card.card-success {
+    border-color: #00bfa5; /* Border Teal/Hijau Cerah */
+    box-shadow: 0 0 15px rgba(0, 191, 165, 0.6); /* EFEK GLOW HIJAU */
+}
+
+.stat-card.card-success .card-icon,
+.stat-card.card-success .data-value,
+.stat-card.card-success .text-label {
+    color: #1de9b6; /* Warna Ikon & Teks Hijau Terang */
+}

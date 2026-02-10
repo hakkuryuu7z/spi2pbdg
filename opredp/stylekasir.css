@@ -1,0 +1,167 @@
+/* =========================================
+   1. Card & Filter Styling
+   ========================================= */
+.card-header.bg-primary {
+    background: linear-gradient(45deg, #007bff, #0056b3) !important;
+    font-weight: 600;
+    letter-spacing: 0.5px;
+    border-bottom: none;
+}
+
+.card-body {
+    /* Sedikit memberikan ruang napas */
+    padding: 1.25rem;
+}
+
+/* Label filter agar lebih tegas */
+.form-label.fw-bold {
+    font-weight: 600;
+    margin-bottom: 0.5rem;
+    color: #e9ecef; /* Warna teks terang untuk dark mode */
+}
+
+/* =========================================
+   2. Table Styling
+   ========================================= */
+#tableKasir {
+    border-collapse: separate !important;
+    border-spacing: 0;
+    width: 100% !important;
+    font-size: 0.95rem; /* Ukuran font sedikit lebih enak dibaca */
+}
+
+/* Header Tabel */
+#tableKasir thead th {
+    background-color: #343a40; /* Dark grey */
+    color: #ffffff;
+    text-transform: uppercase;
+    font-size: 0.85rem;
+    letter-spacing: 0.5px;
+    vertical-align: middle;
+    border-bottom: 2px solid #007bff; /* Garis biru di bawah header */
+    white-space: nowrap; /* Mencegah header turun baris */
+}
+
+/* Sel Tabel */
+#tableKasir tbody td {
+    vertical-align: middle !important; /* Teks selalu di tengah vertikal */
+    padding: 12px 15px;
+    border-color: #4b545c; /* Warna border halus untuk dark mode */
+}
+
+/* Baris Hover */
+#tableKasir tbody tr:hover {
+    background-color: rgba(0, 123, 255, 0.1) !important; /* Efek hover biru transparan */
+    transition: background-color 0.2s ease;
+}
+
+/* Kolom Angka (Total Belanja) */
+#tableKasir td.text-end, 
+#tableKasir td.text-right {
+    font-family: 'Consolas', 'Monaco', monospace; /* Font monospace untuk angka agar rata */
+    font-weight: 600;
+    color: #ffd700; /* Warna emas/kuning agar angka duit menonjol */
+    letter-spacing: 0.5px;
+}
+
+/* =========================================
+   3. Grand Total Footer
+   ========================================= */
+#tableKasir tfoot {
+    background-color: #454d55;
+    color: #fff;
+    border-top: 2px solid #adb5bd;
+}
+
+#tableKasir tfoot td {
+    padding: 15px;
+    font-size: 1.1rem; /* Total lebih besar */
+}
+
+#grandTotalDisplay {
+    color: #28a745; /* Warna hijau sukses untuk total akhir */
+    font-family: 'Source Sans Pro', sans-serif;
+    font-weight: 800;
+}
+
+/* =========================================
+   4. Badges (Kode Member)
+   ========================================= */
+.badge-info {
+    background-color: #17a2b8;
+    color: #fff;
+    font-size: 0.85rem;
+    padding: 6px 10px;
+    border-radius: 4px;
+    font-weight: normal;
+    box-shadow: 0 2px 4px rgba(0,0,0,0.2);
+}
+
+/* =========================================
+   5. DataTables Customization (Dark Mode Fixes)
+   ========================================= */
+/* Wrapper length & search */
+.dataTables_wrapper .dataTables_length, 
+.dataTables_wrapper .dataTables_filter {
+    color: #ced4da !important;
+    margin-bottom: 1rem;
+}
+
+/* Input search & select */
+.dataTables_wrapper .dataTables_filter input,
+.dataTables_wrapper .dataTables_length select {
+    background-color: #343a40;
+    border: 1px solid #6c757d;
+    color: white;
+    border-radius: 4px;
+    padding: 4px 8px;
+}
+
+.dataTables_wrapper .dataTables_filter input:focus {
+    border-color: #007bff;
+    outline: none;
+    box-shadow: 0 0 0 0.2rem rgba(0, 123, 255, 0.25);
+}
+
+/* Pagination Buttons */
+.page-item.active .page-link {
+    background-color: #007bff;
+    border-color: #007bff;
+    font-weight: bold;
+}
+
+.page-item.disabled .page-link {
+    background-color: #343a40;
+    border-color: #6c757d;
+    color: #6c757d;
+}
+
+.page-link {
+    background-color: #343a40;
+    border-color: #6c757d;
+    color: #ced4da;
+}
+
+.page-link:hover {
+    background-color: #495057;
+    border-color: #6c757d;
+    color: white;
+}
+
+/* Teks info "Showing 1 to 10..." */
+.dataTables_info {
+    color: #adb5bd !important;
+    font-size: 0.9rem;
+    padding-top: 1rem;
+}
+
+/* =========================================
+   6. Responsiveness Styling
+   ========================================= */
+/* Tombol (+) biru saat di mobile */
+table.dataTable.dtr-inline.collapsed > tbody > tr > td.dtr-control:before,
+table.dataTable.dtr-inline.collapsed > tbody > tr > th.dtr-control:before {
+    background-color: #007bff;
+    border: none;
+    box-shadow: none;
+}

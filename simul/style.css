@@ -1,0 +1,162 @@
+.table { color: #f8f9fa; }
+        
+        /* Sticky Header (Vertical Scroll) */
+        .table thead.thead-dark th {
+            position: sticky;
+            z-index: 10;
+            background-color: #343a40; 
+            border-color: #454d55;
+        }
+        .table thead.thead-dark tr:first-child th {
+            top: 0;
+            z-index: 11; /* z-index default untuk baris pertama */
+        }
+        .table thead.thead-dark tr:nth-child(2) th {
+            top: 50px; /* Sesuaikan angka ini jika tinggi baris header pertama berbeda */
+            z-index: 10; /* z-index lebih rendah untuk baris kedua */
+        }
+
+        /* Striped Rows */
+        .table-striped tbody tr:nth-of-type(odd) {
+            background-color: #3a3f44; 
+        }
+        .table-striped tbody tr:nth-of-type(even) {
+            background-color: #343a40; 
+        }
+        .table tbody tr {
+             border-color: #454d55; 
+        }
+        .table-hover tbody tr:hover { 
+            background-color: #454a4f; 
+        }
+
+        /* Scrollable Container */
+        .table-responsive {
+            max-height: 75vh; 
+            overflow: auto; 
+        }
+
+        /* Input Styling */
+        .form-control.pb-ctn {
+            background-color: #2b3035 !important;
+            color: #f8f9fa !important;
+            border: 1px solid #454d55;
+            width: 100px; 
+            margin: auto;
+            text-align: right;
+            height: calc(1.5em + .75rem + 2px);
+            padding: .375rem .75rem;
+            font-size: 1rem;
+            line-height: 1.5;
+            
+        }
+        .form-control.pb-ctn::-webkit-outer-spin-button,
+        .form-control.pb-ctn::-webkit-inner-spin-button {
+            -webkit-appearance: none;
+            margin: 0;
+        }
+        .form-control.pb-ctn:focus {
+            background-color: #3a3f44 !important;
+            border-color: #007bff;
+            box-shadow: none;
+        }
+        .pb-pcs, .dsi-hari {
+            background-color: #2b3035 !important;
+            font-weight: bold;
+        }
+        .dsi-hari { color: #17a2b8 !important; }
+
+        /* Search Input */
+        .search-input {
+            background-color: #3a3f44;
+            color: #f8f9fa;
+            border-color: #454d55;
+        }
+        .search-input:focus {
+            background-color: #3a3f44;
+            color: #f8f9fa;
+            border-color: #007bff;
+            box-shadow: none;
+        }
+        .input-group-text.dark-bg {
+            background-color: #343a40;
+            border-color: #454d55;
+        }
+        
+        
+        /* --- [PERBAIKAN STICKY COLUMNS (Horizontal Scroll)] --- */
+        
+        /* 1. Tentukan lebar tetap untuk kolom yang akan di-sticky */
+        .table th:nth-child(1), .table td:nth-child(1) { width: 50px; min-width: 50px; }
+        .table th:nth-child(2), .table td:nth-child(2) { width: 100px; min-width: 100px; }
+        .table th:nth-child(3), .table td:nth-child(3) { width: 300px; min-width: 300px; }
+
+        /* 2. Atur posisi sticky 'left' HANYA untuk <th> di baris PERTAMA */
+        /* Beri z-index TERTINGGI (di atas baris header lainnya) */
+        .table thead.thead-dark tr:first-child th:nth-child(1) { left: 0; z-index: 13; }
+        .table thead.thead-dark tr:first-child th:nth-child(2) { left: 50px; z-index: 13; }
+        .table thead.thead-dark tr:first-child th:nth-child(3) { left: 150px; z-index: 13; }
+
+        /* 3. Atur posisi sticky 'left' untuk body (td) */
+        /* Beri z-index RENDAH (di bawah header) */
+        .table tbody td:nth-child(1) { position: sticky; left: 0; z-index: 5; }
+        .table tbody td:nth-child(2) { position: sticky; left: 50px; z-index: 5; }
+        .table tbody td:nth-child(3) { position: sticky; left: 150px; z-index: 5; }
+        
+        /* 4. [PENTING] Beri background pada sel <td> sticky agar tidak transparan */
+        .table-striped tbody tr:nth-of-type(odd) td:nth-child(1),
+        .table-striped tbody tr:nth-of-type(odd) td:nth-child(2),
+        .table-striped tbody tr:nth-of-type(odd) td:nth-child(3) {
+            background-color: #3a3f44;
+        }
+        .table-striped tbody tr:nth-of-type(even) td:nth-child(1),
+        .table-striped tbody tr:nth-of-type(even) td:nth-child(2),
+        .table-striped tbody tr:nth-of-type(even) td:nth-child(3) {
+            background-color: #343a40;
+        }
+        .table-hover tbody tr:hover td:nth-child(1),
+        .table-hover tbody tr:hover td:nth-child(2),
+        .table-hover tbody tr:hover td:nth-child(3) {
+            background-color: #454a4f;
+        }
+        /* --- [AKHIR PERBAIKAN] --- */
+        
+/* --- CSS SORTING KEREN --- */
+
+/* Header bisa diklik */
+.sortable {
+    cursor: pointer;
+    position: relative;
+    padding-right: 20px !important; /* Ruang untuk icon */
+    transition: all 0.2s ease;
+}
+
+/* Efek Hover */
+.sortable:hover {
+    background-color: #495057 !important;
+    color: #fff;
+}
+
+/* State AKTIF (Sedang di-sort) - Warna Biru */
+.sortable.active-sort {
+    background-color: #007bff !important; /* Biru Bootstrap */
+    color: white !important;
+    border-bottom: 2px solid #66b0ff;
+}
+
+/* Styling Icon FontAwesome */
+.sortable i {
+    font-size: 0.8em;
+    position: absolute;
+    right: 8px;      /* Tempel di kanan */
+    top: 50%;
+    transform: translateY(-50%); /* Tengah vertikal */
+    opacity: 0.3;    /* Transparan kalau belum aktif */
+    transition: opacity 0.2s;
+}
+
+/* Icon menyala jika header aktif atau di-hover */
+.sortable:hover i,
+.sortable.active-sort i {
+    opacity: 1;
+}

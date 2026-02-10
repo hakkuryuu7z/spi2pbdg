@@ -1,0 +1,293 @@
+.card-modern {
+        background-color: #1e1e2d; /* Dark theme background */
+        border: none;
+        border-radius: 15px;
+        box-shadow: 0 4px 20px rgba(0, 0, 0, 0.4); /* Shadow lebih dalam */
+    }
+
+    .card-header-modern {
+        background: transparent;
+        border-bottom: 1px solid rgba(255, 255, 255, 0.05);
+        padding: 20px 25px;
+    }
+
+    /* --- Modern Table Styling --- */
+    .table-modern {
+        width: 100%;
+        border-collapse: separate;
+        border-spacing: 0 8px; /* Jarak antar baris (floating effect) */
+        color: #e2e2e2;
+        margin-top: 10px;
+    }
+
+    /* Header Table */
+    .table-modern thead th {
+        background-color: transparent;
+        color: #8f9bb3;
+        font-weight: 700;
+        text-transform: uppercase;
+        font-size: 0.75rem;
+        letter-spacing: 1px;
+        padding: 15px;
+        border: none;
+    }
+
+    /* Isi Table (Rows) */
+    .table-modern tbody tr {
+        background-color: #2b2b40;
+        transition: all 0.2s ease;
+    }
+
+    .table-modern tbody tr:hover {
+        background-color: #323248;
+        transform: translateY(-3px); /* Efek naik saat hover */
+        box-shadow: 0 5px 15px rgba(0,0,0,0.3);
+    }
+
+    .table-modern td {
+        padding: 18px 15px;
+        border: none;
+        vertical-align: middle;
+        font-size: 0.95rem;
+        font-weight: 500;
+    }
+
+    /* Rounded Corners untuk baris */
+    .table-modern td:first-child { border-radius: 10px 0 0 10px; }
+    .table-modern td:last-child { border-radius: 0 10px 10px 0; }
+
+    /* --- Styling Kolom --- */
+    .text-value-main {
+        font-size: 1.1rem;
+        font-weight: bold;
+        color: #fff;
+    }
+
+    .highlight-column {
+        background-color: rgba(0, 201, 167, 0.15) !important;
+        color: #00c9a7;
+        font-weight: bold;
+        text-align: center;
+    }
+
+    /* --- Progress Bar Modern --- */
+    .progress-track {
+        height: 6px;
+        background-color: #3b3b4f;
+        border-radius: 10px;
+        margin-top: 8px;
+        width: 100%;
+        overflow: hidden;
+    }
+    
+    .progress-fill {
+        height: 100%;
+        border-radius: 10px;
+        /* Gradient warna "Mahal" */
+        background: linear-gradient(90deg, #ff9966, #ff5e62); 
+        box-shadow: 0 0 10px rgba(255, 94, 98, 0.5); /* Glowing effect */
+        transition: width 1s ease-in-out;
+    }
+
+    .progress-fill.high {
+        background: linear-gradient(90deg, #00c9a7, #00d2ff); /* Warna beda kalau target tinggi */
+        box-shadow: 0 0 10px rgba(0, 210, 255, 0.5);
+    }
+    
+    .percent-text {
+        font-size: 0.85rem;
+        font-weight: bold;
+        color: #ff9966;
+    }
+
+.col-clickable {
+        cursor: pointer;
+        transition: all 0.2s ease;
+        position: relative;
+    }
+
+    /* Efek saat mouse hover di atas KOTAK (TD) */
+    .col-clickable:hover {
+        background-color: rgba(63, 135, 245, 0.2) !important; /* Biru transparan */
+        box-shadow: inset 0 0 15px rgba(0,0,0,0.3); /* Efek kedalaman */
+        color: #fff; /* Pastikan teks tetap terang */
+    }
+
+    /* Ikon kaca pembesar muncul otomatis saat hover di pojok */
+    .col-clickable:hover::after {
+        content: '\f002'; /* Kode icon search FontAwesome */
+        font-family: "Font Awesome 5 Free";
+        font-weight: 900;
+        position: absolute;
+        right: 8px;
+        top: 8px;
+        font-size: 0.8rem;
+        color: rgba(255,255,255,0.4);
+    }
+
+    /* --- Modern Modal Styling --- */
+.modal-content-modern {
+    background-color: #1e1e2d; /* Warna dasar gelap */
+    border: 1px solid rgba(255, 255, 255, 0.1);
+    border-radius: 15px;
+    box-shadow: 0 0 30px rgba(0, 0, 0, 0.5); /* Shadow besar biar 'pop-up' */
+}
+
+.modal-header-modern {
+    border-bottom: 1px solid rgba(255, 255, 255, 0.05);
+    padding: 20px 25px;
+    display: flex;
+    align-items: center;
+    background: linear-gradient(to right, rgba(30, 30, 45, 1), rgba(43, 43, 64, 1));
+    border-radius: 15px 15px 0 0;
+}
+
+.btn-close-modern {
+    background: rgba(255,255,255,0.1);
+    border-radius: 50%;
+    width: 30px;
+    height: 30px;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    transition: all 0.2s;
+    border: none;
+    color: #fff;
+}
+
+.btn-close-modern:hover {
+    background: #ff5e62; /* Merah saat hover */
+    transform: rotate(90deg);
+}
+
+/* --- Table Detail Modern --- */
+.table-detail {
+    width: 100%;
+    border-collapse: separate;
+    border-spacing: 0 4px; /* Jarak kecil antar baris */
+    color: #e2e2e2;
+}
+
+.table-detail thead th {
+    background-color: rgba(0,0,0,0.2);
+    color: #8f9bb3;
+    font-size: 0.8rem;
+    text-transform: uppercase;
+    font-weight: 700;
+    padding: 15px;
+    border: none;
+}
+
+.table-detail tbody tr {
+    background-color: #2b2b40;
+    transition: all 0.2s ease;
+}
+
+.table-detail tbody tr:hover {
+    background-color: #34344a;
+    transform: scale(1.01); /* Efek zoom in dikit */
+    box-shadow: 0 5px 15px rgba(0,0,0,0.2);
+}
+
+.table-detail td {
+    padding: 12px 15px;
+    border: none;
+    font-size: 0.9rem;
+    vertical-align: middle;
+    border-top: 1px solid rgba(255,255,255,0.02);
+}
+
+/* Sudut membulat untuk baris tabel */
+.table-detail td:first-child { border-radius: 8px 0 0 8px; }
+.table-detail td:last-child { border-radius: 0 8px 8px 0; }
+
+/* Custom Scrollbar untuk Modal Body */
+.modal-body-custom {
+    max-height: 70vh;
+    overflow-y: auto;
+    padding: 20px;
+}
+
+/* Scrollbar Style */
+.modal-body-custom::-webkit-scrollbar {
+    width: 6px;
+}
+.modal-body-custom::-webkit-scrollbar-track {
+    background: #1e1e2d; 
+}
+.modal-body-custom::-webkit-scrollbar-thumb {
+    background: #444; 
+    border-radius: 10px;
+}
+.modal-body-custom::-webkit-scrollbar-thumb:hover {
+    background: #666; 
+}
+
+/* Badge untuk Kode Toko */
+.badge-code {
+    background: rgba(0, 201, 167, 0.1);
+    color: #00c9a7;
+    padding: 5px 10px;
+    border-radius: 5px;
+    font-weight: bold;
+    font-size: 0.85rem;
+    border: 1px solid rgba(0, 201, 167, 0.2);
+}
+
+/* --- Modern Pagination Styling --- */
+.pagination-container {
+    display: flex;
+    justify-content: center;
+    align-items: center;
+    margin-top: 0;
+}
+
+.pagination-modern {
+    display: flex;
+    list-style: none;
+    padding: 0;
+    margin: 0;
+    background: #1e1e2d;
+    border-radius: 50px;
+    padding: 5px;
+    box-shadow: inset 0 0 10px rgba(0,0,0,0.5); /* Shadow ke dalam */
+}
+
+.page-item-modern {
+    margin: 0 3px;
+}
+
+.page-link-modern {
+    display: block;
+    width: 35px;
+    height: 35px;
+    line-height: 35px;
+    text-align: center;
+    border-radius: 50%;
+    color: #8f9bb3;
+    background: transparent;
+    text-decoration: none;
+    font-weight: bold;
+    font-size: 0.9rem;
+    transition: all 0.2s ease;
+    cursor: pointer;
+    border: 1px solid transparent;
+}
+
+.page-link-modern:hover {
+    color: #fff;
+    background-color: rgba(255, 255, 255, 0.1);
+}
+
+.page-item-modern.active .page-link-modern {
+    background: linear-gradient(45deg, #00c9a7, #00d2ff); /* Gradient Cyan */
+    color: #fff;
+    box-shadow: 0 2px 10px rgba(0, 210, 255, 0.4);
+    border: none;
+}
+
+.page-item-modern.disabled .page-link-modern {
+    color: #444;
+    cursor: not-allowed;
+    background: transparent;
+}

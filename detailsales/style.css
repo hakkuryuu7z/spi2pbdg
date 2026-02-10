@@ -1,0 +1,386 @@
+/* =================================================================== */
+/* === STYLING GLOBAL & VARIABLE WARNA (TEMA GELAP) === */
+/* =================================================================== */
+:root {
+    --primary-color: #007bff;
+    --success-color: #28a745;
+    --danger-color: #dc3545;
+    --warning-color: #ffc107;
+    --info-color: #17a2b8;
+    --background-color: #1e293b; /* Biru Dongker Gelap */
+    --card-bg-color: #2b3a50;      /* Warna kartu sedikit lebih terang */
+    --border-color: #475569;       /* Warna border/garis */
+    --text-primary-color: #f8fafc; /* Putih Gading */
+    --text-secondary-color: #a0aec0;/* Abu-abu terang */
+    --shadow: 0 4px 10px rgba(0, 0, 0, 0.2);
+    --border-radius: 0.75rem;
+}
+
+body {
+    background-color: var(--background-color);
+    color: var(--text-primary-color);
+    font-family: 'Poppins', sans-serif; /* Opsional: gunakan font modern */
+}
+
+/* =================================================================== */
+/* === KARTU STATISTIK MODERN (STAT CARD) === */
+/* =================================================================== */
+.stat-card {
+    background-color: var(--card-bg-color);
+    border: 1px solid var(--border-color);
+    border-radius: var(--border-radius);
+    transition: all 0.3s ease-in-out;
+    overflow: hidden;
+    position: relative;
+    cursor: pointer;
+}
+
+.stat-card:hover {
+    transform: translateY(-6px);
+    box-shadow: 0 10px 20px rgba(0, 0, 0, 0.3);
+    border-color: #7c8db0;
+}
+
+/* Lingkaran Ikon */
+.icon-circle {
+    width: 55px;
+    height: 55px;
+    border-radius: 50%;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    color: white;
+    flex-shrink: 0;
+    box-shadow: 0 0 15px rgba(255, 255, 255, 0.1);
+}
+
+.icon-circle .fas {
+    font-size: 1.5em; /* Ikon sedikit lebih besar */
+}
+
+/* Efek "Glow" (Bersinar) untuk setiap warna ikon */
+.icon-circle.bg-info { box-shadow: 0 0 20px 2px rgba(23, 162, 184, 0.5); }
+.icon-circle.bg-success { box-shadow: 0 0 20px 2px rgba(40, 167, 69, 0.5); }
+.icon-circle.bg-danger { box-shadow: 0 0 20px 2px rgba(220, 53, 69, 0.5); }
+.icon-circle.bg-warning { box-shadow: 0 0 20px 2px rgba(255, 193, 7, 0.5); }
+.icon-circle.bg-primary { box-shadow: 0 0 20px 2px rgba(0, 123, 255, 0.5); }
+.icon-circle.bg-secondary { box-shadow: 0 0 20px 2px rgba(108, 117, 125, 0.5); }
+
+/* Tipografi di dalam kartu statistik */
+.stat-card .text-muted {
+    color: var(--text-secondary-color) !important;
+    font-size: 0.9rem;
+    font-weight: 500;
+}
+
+.stat-card .h4 {
+    color: var(--text-primary-color);
+    font-size: 1.75rem;
+    font-weight: 700;
+    margin-top: 4px;
+}
+
+/* Style untuk kartu yang aktif saat filter diklik */
+.status-filter-card .card.active-card {
+    border: 2px solid var(--primary-color);
+    box-shadow: 0 0 15px rgba(0, 123, 255, 0.5);
+}
+
+/* =================================================================== */
+/* === KARTU UMUM & FORM FILTER === */
+/* =================================================================== */
+.card {
+    background-color: var(--card-bg-color);
+    border: 1px solid var(--border-color);
+    border-radius: var(--border-radius);
+    box-shadow: var(--shadow);
+    transition: all 0.3s ease-in-out;
+}
+
+.card-header {
+    background-color: transparent;
+    border-bottom: 1px solid var(--border-color);
+    padding: 1rem 1.25rem;
+    color: var(--text-primary-color);
+}
+
+.card-title {
+    font-weight: 600;
+}
+
+label.form-label {
+    color: var(--text-primary-color);
+}
+
+.form-control {
+    background-color: #475569;
+    border-color: var(--border-color);
+    color: var(--text-primary-color);
+}
+.form-control:focus {
+    background-color: #475569;
+    color: var(--text-primary-color);
+    border-color: var(--primary-color);
+    box-shadow: 0 0 0 0.2rem rgba(0,123,255,.25);
+}
+.form-control::placeholder {
+    color: #a0aec0;
+}
+
+/* =================================================================== */
+/* === TABEL & PENCARIAN === */
+/* =================================================================== */
+.table {
+    color: #cbd5e1;
+}
+.table-striped tbody tr:nth-of-type(odd) {
+    background-color: rgba(71, 85, 105, 0.3);
+}
+.table-hover tbody tr:hover {
+    background-color: rgba(71, 85, 105, 0.7);
+}
+.thead-dark th {
+    background-color: #334155;
+    border-color: #475569;
+    color: var(--text-primary-color);
+}
+
+.input-group-text {
+    border-radius: var(--border-radius) 0 0 var(--border-radius);
+}
+
+/* =================================================================== */
+/* === PAGINATION LEBIH MODERN & SIMPLE === */
+/* =================================================================== */
+.pagination {
+    --pagination-bg: transparent; /* Latar belakang dasar transparan */
+    --pagination-hover-bg: #475569; /* Latar belakang saat disentuh */
+    --pagination-text-color: var(--text-secondary-color);
+    --pagination-active-text-color: #ffffff;
+}
+
+.page-link {
+    background-color: var(--pagination-bg);
+    border: none; /* Menghilangkan border untuk tampilan lebih bersih */
+    color: var(--pagination-text-color);
+    margin: 0 5px; /* Sedikit lebih banyak jarak */
+    border-radius: 8px !important; /* Sudut sedikit lebih tumpul */
+    transition: transform 0.25s ease, background-color 0.25s ease, color 0.25s ease, box-shadow 0.25s ease;
+    font-weight: 600;
+    padding: 0.5rem 0.9rem; /* Padding agar lebih seimbang */
+}
+
+/* Efek "Hover Manja" yang baru */
+.page-item:not(.active) .page-link:hover {
+    background-color: var(--pagination-hover-bg);
+    color: var(--text-primary-color);
+    /* Tombol sedikit terangkat dan membesar */
+    transform: translateY(-3px) scale(1.05);
+}
+
+.page-item.active .page-link {
+    background-color: var(--primary-color);
+    border-color: var(--primary-color);
+    color: var(--pagination-active-text-color);
+    /* Efek glow yang lebih halus dan menyebar */
+    box-shadow: 0 0 18px 2px rgba(0, 123, 255, 0.45);
+    transform: scale(1.1); /* Item aktif dibuat sedikit lebih besar */
+}
+
+.page-item.disabled .page-link {
+    background-color: transparent;
+    color: rgba(108, 117, 125, 0.6); /* Lebih transparan */
+    pointer-events: none;
+}
+
+/* Menghilangkan box-shadow bawaan saat focus */
+.page-link:focus {
+    box-shadow: none;
+}
+/* =================================================================== */
+/* === MODAL === */
+/* =================================================================== */
+.modal-content {
+    background-color: var(--background-color);
+    border: 1px solid var(--border-color);
+    border-radius: var(--border-radius);
+    color: var(--text-primary-color);
+}
+
+.modal-header {
+    background-color: #2b3a50;
+    color: white;
+    border-bottom: 1px solid var(--border-color);
+    border-top-left-radius: var(--border-radius);
+    border-top-right-radius: var(--border-radius);
+}
+
+.modal-footer {
+    border-top: 1px solid var(--border-color);
+}
+
+.modal-header .close {
+    color: white;
+    opacity: 0.9;
+    text-shadow: none;
+}
+
+#modalBodyContent .table-sm th,
+#modalBodyContentPlu .table-sm th,
+#modalBodyContentAdt .table-sm th {
+    background-color: #334155;
+}
+
+/* --- CUSTOM MODAL DARK PREMIUM --- */
+.modal-dark-premium .modal-content {
+    background-color: #1e1e2d; /* Warna background gelap tapi tidak hitam pekat */
+    border: 1px solid #323248;
+    border-radius: 12px; /* Sudut lebih membulat */
+    box-shadow: 0 0 20px rgba(0, 0, 0, 0.5);
+}
+
+.modal-dark-premium .modal-header {
+    border-bottom: 1px solid #323248;
+    padding: 20px 25px;
+    background-color: #1b1b29;
+    border-radius: 12px 12px 0 0;
+}
+
+.modal-dark-premium .table td {
+    vertical-align: middle;
+    padding: 15px 15px;
+    border-top: 1px solid #2d2d40; /* Garis pemisah yang sangat halus */
+    color: #b5b5c3; /* Warna teks abu-abu soft */
+}
+
+.modal-dark-premium .table tr:hover td {
+    background-color: #262639; /* Efek hover baris */
+    color: #ffffff;
+}
+
+/* Styling Khusus untuk No PB */
+.pb-number-main {
+    font-size: 14px;
+    font-weight: 600;
+    color: #ffffff;
+    font-family: 'Consolas', 'Monaco', monospace; /* Font coding biar angka tegas */
+    letter-spacing: 0.5px;
+}
+.pb-number-sub {
+    font-size: 11px;
+    color: #6c7293;
+    display: block;
+    margin-top: 2px;
+}
+
+/* Styling Nama Member */
+.member-name {
+    font-size: 14px;
+    font-weight: 700;
+    color: #ffffff;
+    display: block;
+}
+.member-code {
+    font-size: 11px;
+    color: #8f95b2;
+    background-color: #323248;
+    padding: 2px 6px;
+    border-radius: 4px;
+    display: inline-block;
+    margin-top: 4px;
+}
+
+/* Status Badge Modern (Soft) */
+.badge-soft-success { background-color: rgba(28, 200, 138, 0.15); color: #1cc88a; }
+.badge-soft-warning { background-color: rgba(246, 194, 62, 0.15); color: #f6c23e; }
+.badge-soft-info    { background-color: rgba(54, 185, 204, 0.15); color: #36b9cc; }
+.badge-soft-danger  { background-color: rgba(231, 74, 59, 0.15);  color: #e74a3b; }
+.badge-soft-primary { background-color: rgba(78, 115, 223, 0.15); color: #4e73df; }
+
+.btn-icon-soft {
+    background: rgba(54, 185, 204, 0.1);
+    color: #36b9cc;
+    border: none;
+    width: 35px;
+    height: 35px;
+    border-radius: 8px;
+    transition: all 0.3s;
+}
+.btn-icon-soft:hover {
+    background: #36b9cc;
+    color: white;
+    transform: scale(1.05);
+}
+
+/* --- RESPONSIVE LIST ITEM (PENGGANTI TABEL) --- */
+.transaction-item {
+    background-color: #2b2b40; /* Sedikit lebih terang dari background modal */
+    border: 1px solid #383854;
+    border-radius: 10px;
+    transition: all 0.2s ease-in-out;
+}
+
+.transaction-item:hover {
+    background-color: #323248; /* Efek hover */
+    border-color: #4a4a6a;
+    transform: translateY(-2px); /* Efek naik sedikit */
+}
+
+/* Styling Text agar Rapi */
+.text-label-small {
+    font-size: 10px;
+    text-transform: uppercase;
+    letter-spacing: 0.5px;
+    color: #6c7293;
+    margin-bottom: 2px;
+}
+
+.member-name-lg {
+    font-size: 14px;
+    font-weight: 700;
+    color: #fff;
+}
+
+.pb-main-text {
+    font-family: 'Consolas', monospace;
+    font-size: 14px;
+    color: #00d2ff; /* Warna Cyan cerah untuk No PB */
+}
+
+/* Styling Kartu Transaksi Responsif */
+.transaction-card {
+    background-color: #2b2b40;
+    border: 1px solid #383854;
+    border-radius: 12px;
+    margin-bottom: 15px;
+    box-shadow: 0 4px 6px rgba(0,0,0,0.2);
+    transition: transform 0.2s;
+}
+
+.transaction-card:active {
+    transform: scale(0.98); /* Efek tekan saat di klik di HP */
+}
+
+/* Typography Khusus */
+.card-label {
+    font-size: 10px;
+    color: #6c757d;
+    text-transform: uppercase;
+    font-weight: 600;
+    margin-bottom: 2px;
+}
+
+.card-value-main {
+    color: #fff;
+    font-weight: 700;
+    font-size: 14px;
+    line-height: 1.2;
+}
+
+.card-value-sub {
+    color: #00d2ff; /* Warna Cyan neon */
+    font-family: 'Consolas', monospace;
+    font-size: 13px;
+    margin-top: 2px;
+    word-break: break-all; /* Agar nomor PB panjang turun ke bawah di HP, bukan melebar */
+}

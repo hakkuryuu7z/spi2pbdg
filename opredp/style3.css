@@ -1,0 +1,196 @@
+/* --- :ROOT (Palet Warna Modern Slate/Teal) --- */
+:root {
+    --bg-color: #18181b;       /* Latar belakang (Slate 900) */
+    --surface-color: #27272a;  /* Warna Panel (Slate 800) */
+    --primary-text: #f4f4f5;   /* Teks utama (Slate 100) */
+    --secondary-text: #a1a1aa; /* Teks sekunder (Slate 400) */
+    --border-color: #3f3f46;   /* Border (Slate 700) */
+    --accent-color: #2dd4bf;   /* Aksen (Teal 400) */
+    --accent-hover: #14b8a6;   /* Aksen hover (Teal 500) */
+    --row-hover: #3f3f46;     /* Hover baris tabel */
+    
+    --error-color: #f43f5e;    /* Merah */
+    --success-color: #4ade80;  /* Hijau */
+    --info-color: var(--accent-color); /* Info (pakai warna aksen) */
+}
+
+html { box-sizing: border-box; }
+*, *:before, *:after { box-sizing: inherit; }
+
+body {
+    font-family: -apple-system, BlinkMacSystemFont, "Segoe UI", Roboto, Helvetica, Arial, sans-serif;
+    background-color: var(--bg-color);
+    color: var(--primary-text);
+    margin: 0;
+    padding: 2rem;
+    line-height: 1.6;
+    transition: background-color 0.3s ease;
+}
+
+.container {
+    max-width: 1400px;
+    margin: 0 auto;
+}
+
+/* --- Panel Utama --- */
+.data-panel {
+    background-color: var(--surface-color);
+    border-radius: 12px;
+    box-shadow: 0 10px 30px rgba(0, 0, 0, 0.25);
+    overflow: hidden;
+}
+
+/* --- Header di dalam Panel --- */
+header {
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    flex-wrap: wrap; 
+    gap: 1rem; 
+    padding: 1.5rem 2rem; 
+    border-bottom: 1px solid var(--border-color);
+}
+
+h1 {
+    color: #f8fafc;
+    margin: 0;
+    font-weight: 600;
+}
+
+/* --- Tombol dengan Ikon --- */
+#refreshBtn {
+    display: inline-flex;
+    align-items: center;
+    gap: 0.6rem; 
+    background-color: var(--accent-color);
+    color: var(--bg-color); /* Teks tombol jadi gelap agar kontras */
+    border: none;
+    padding: 0.75rem 1.5rem;
+    border-radius: 8px;
+    cursor: pointer;
+    font-size: 1rem;
+    font-weight: 700;
+    transition: all 0.2s ease-in-out;
+    box-shadow: 0 4px 14px 0 rgba(0, 0, 0, 0.1);
+}
+
+#refreshBtn:disabled {
+    background-color: var(--secondary-text);
+    cursor: not-allowed;
+}
+
+#refreshBtn:hover:not(:disabled) {
+    background-color: var(--accent-hover);
+    transform: translateY(-2px);
+    box-shadow: 0 6px 20px 0 rgba(0, 0, 0, 0.15);
+}
+
+#refreshBtn svg {
+    width: 1.1em;
+    height: 1.1em;
+}
+
+/* --- Area Status & Spinner --- */
+@keyframes spin {
+    0% { transform: rotate(0deg); }
+    100% { transform: rotate(360deg); }
+}
+
+#statusArea {
+    /* --- INI PERBAIKANNYA --- */
+    /* min-height: 150px; <-- Dihapus agar panel bisa mengempis */
+    display: flex;
+    justify-content: center;
+    align-items: center;
+    padding: 1.5rem; /* Beri padding agar tidak mepet */
+    transition: padding 0.3s ease; /* Transisi halus */
+}
+
+.spinner {
+    width: 48px;
+    height: 48px;
+    border: 5px solid var(--border-color);
+    border-bottom-color: var(--accent-color);
+    border-radius: 50%;
+    display: none;
+    animation: spin 1s linear infinite;
+}
+
+#statusMessage {
+    font-size: 1.1rem;
+    font-weight: 500;
+}
+#statusMessage.error   { color: var(--error-color); }
+#statusMessage.success { color: var(--success-color); }
+#statusMessage.info    { color: var(--info-color); }
+
+/* --- Logika Show/Hide via CSS --- */
+.data-panel.loading #loadingSpinner {
+    display: block;
+}
+.data-panel.loading #statusMessage {
+    display: none;
+}
+.data-panel:not(.loading) #loadingSpinner {
+    display: none;
+}
+.data-panel:not(.loading) #statusMessage {
+    display: block;
+}
+
+/* --- Kontainer Tabel --- */
+.table-container {
+    width: 100%;
+    overflow-x: auto;
+}
+
+/* --- Styling Tabel --- */
+table {
+    width: 100%;
+    min-width: 800px;
+    border-collapse: separate; 
+    border-spacing: 0;
+}
+
+th, td {
+    padding: 1rem 1.5rem;
+    text-align: left;
+    white-space: nowrap;
+    border-bottom: 1px solid var(--border-color);
+}
+
+thead th {
+    background-color: var(--surface-color);
+    font-weight: 600;
+    color: var(--accent-color);
+    text-transform: uppercase;
+    letter-spacing: 0.5px;
+    position: sticky;
+    top: 0;
+    z-index: 10;
+    box-shadow: 0 2px 2px -1px rgba(0, 0, 0, 0.4); 
+}
+
+tbody tr:last-child td {
+    border-bottom: none;
+}
+
+tbody tr:hover {
+    background-color: var(--row-hover);
+}
+
+/* --- Animasi Fade-in Baris Tabel --- */
+@keyframes fadeIn {
+    from {
+        opacity: 0;
+        transform: translateY(10px);
+    }
+    to {
+        opacity: 1;
+        transform: translateY(0);
+    }
+}
+
+tbody.fade-in {
+    animation: fadeIn 0.5s ease-out forwards;
+}

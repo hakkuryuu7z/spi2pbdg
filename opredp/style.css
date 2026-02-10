@@ -1,0 +1,325 @@
+/* ================================== */
+/* SOFT HACKER THEME (Easier on Eyes) */
+/* ================================== */
+
+/* Font utama dan latar belakang yang lebih lembut */
+body.hacker-theme {
+    background-color: #111827; /* Latar belakang: Dark Charcoal, bukan hitam pekat */
+    color: #a3e635; /* Warna teks: Lime green yang lebih lembut */
+    font-family: 'Consolas', 'Menlo', 'Courier New', monospace;
+    font-size: 16px;
+}
+
+/* Mengubah tampilan Card dengan efek yang lebih halus */
+.hacker-theme .card {
+    background-color: #1f2937; /* Latar card: Dark Slate */
+    border: 1px solid #374151; /* Border abu-abu gelap */
+    border-radius: 4px; /* Sudut sedikit melengkung agar lebih modern */
+    box-shadow: none; /* Menghilangkan glow yang tajam */
+}
+
+.hacker-theme .card-header {
+    background-color: transparent;
+    border-bottom: 1px solid #374151; /* Border header yang lembut */
+    color: #9ca3af; /* Warna judul: Abu-abu terang */
+    text-transform: uppercase;
+    letter-spacing: 2px;
+}
+
+/* Mengubah tampilan Tabel */
+.hacker-theme .table {
+    color: #d1d5db; /* Warna teks tabel: Abu-abu muda */
+}
+
+.hacker-theme .table th,
+.hacker-theme .table td {
+    border-color: #374151; /* Border sel yang lembut */
+}
+
+/* Efek hover yang lebih halus */
+.hacker-theme .table-hover tbody tr:hover {
+    background-color: #374151; /* Latar hover abu-abu gelap */
+    color: #f9fafb; /* Teks hover menjadi lebih terang */
+}
+
+/* Class sorotan yang jauh lebih lembut */
+.hacker-theme .highlight-today {
+    /* Latar belakang semi-transparan, hanya memberi sedikit warna */
+    background-color: rgba(163, 230, 53, 0.1) !important; 
+    color: #a3e635 !important; /* Teks menjadi warna hijau utama */
+}
+
+/* Mengubah tampilan Tombol */
+.hacker-theme .btn-primary {
+    background-color: transparent;
+    border: 1px solid #a3e635;
+    border-radius: 4px;
+    color: #a3e635;
+    transition: all 0.2s ease;
+}
+
+.hacker-theme .btn-primary:hover,
+.hacker-theme .btn-primary:focus {
+    background-color: #a3e635;
+    color: #111827; /* Teks menjadi warna latar utama saat di-hover */
+    box-shadow: 0 0 15px rgba(163, 230, 53, 0.4); /* Glow yang lembut */
+}
+
+/* Mengubah tampilan Badge Status */
+.hacker-theme .badge {
+    border-radius: 4px;
+    font-size: 0.8rem;
+    padding: 5px 8px;
+    font-weight: normal;
+}
+.hacker-theme .bg-success {
+    background-color: rgba(163, 230, 53, 0.2) !important;
+    color: #a3e635 !important;
+}
+.hacker-theme .bg-danger {
+    background-color: rgba(239, 68, 68, 0.2) !important;
+    color: #ef4444 !important;
+}
+.hacker-theme .bg-warning {
+    background-color: rgba(234, 179, 8, 0.2) !important;
+    color: #eab308 !important;
+}
+
+/* Menghapus efek scanline yang bisa membuat mata lelah */
+body.hacker-theme::after {
+    display: none;
+}
+
+/* ================================== */
+/* HACKER THEME - MODAL & TABLE SPEC  */
+/* ================================== */
+
+/* 1. Kustomisasi Modal Content */
+.hacker-theme .modal-content {
+    background-color: #111827; /* Dark Charcoal (Sama dengan Body) */
+    border: 1px solid #a3e635; /* Border Hijau Neon */
+    box-shadow: 0 0 20px rgba(163, 230, 53, 0.15); /* Glow halus */
+    color: #d1d5db;
+}
+
+/* 2. Header Modal */
+.hacker-theme .modal-header {
+    border-bottom: 2px solid #374151;
+    background-color: #1f2937; /* Sedikit lebih terang dari body */
+}
+
+.hacker-theme .close {
+    color: #a3e635;
+    text-shadow: 0 0 5px #a3e635;
+    opacity: 1;
+}
+
+.hacker-theme .close:hover {
+    color: #fff;
+    opacity: 1;
+}
+
+/* 3. Tabel Hacker Style */
+.hacker-theme .table-hacker {
+    font-family: 'Consolas', 'Courier New', monospace;
+    font-size: 0.85rem; /* Ukuran font pas untuk data padat */
+}
+
+/* Warna Header Tabel (Pengganti Background Solid) */
+/* Kita pakai Border Top & Warna Teks agar tetap Dark Mode friendly */
+
+.hacker-theme th {
+    background-color: #1f2937;
+    border-color: #374151 !important;
+    vertical-align: middle !important;
+}
+
+/* Group: PRODUK (Cyan) */
+.hacker-theme .th-group-cyan {
+    border-top: 3px solid #06b6d4 !important; /* Cyan Neon */
+    color: #06b6d4;
+    text-transform: uppercase;
+    letter-spacing: 1px;
+}
+
+/* Group: KONDISI (Lime/Yellow) */
+.hacker-theme .th-group-lime {
+    border-top: 3px solid #a3e635 !important; /* Lime Neon */
+    color: #a3e635;
+    text-transform: uppercase;
+    letter-spacing: 1px;
+}
+
+/* Group: HARGA NORMAL (White/Gray) */
+.hacker-theme .th-group-white {
+    border-top: 3px solid #e5e7eb !important; /* White */
+    color: #e5e7eb;
+    text-transform: uppercase;
+    letter-spacing: 1px;
+}
+
+/* Group: HARGA MD (Orange) */
+.hacker-theme .th-group-orange {
+    border-top: 3px solid #f97316 !important; /* Orange Neon */
+    color: #f97316;
+    text-transform: uppercase;
+    letter-spacing: 1px;
+}
+
+/* Baris Data */
+.hacker-theme tbody tr {
+    transition: background-color 0.2s;
+}
+
+.hacker-theme tbody tr:hover {
+    background-color: rgba(163, 230, 53, 0.1) !important; /* Hijau transparan saat hover */
+}
+
+.hacker-theme tbody td {
+    border-color: #374151 !important;
+    color: #9ca3af; /* Abu-abu default */
+}
+
+/* Highlight Angka Penting */
+.hacker-theme .val-white { color: #f3f4f6; font-weight: bold; }
+.hacker-theme .val-cyan { color: #22d3ee; }
+.hacker-theme .val-orange { color: #fb923c; font-weight: bold; }
+
+/* Scrollbar di dalam Modal */
+.modal-body::-webkit-scrollbar { width: 8px; height: 8px; }
+.modal-body::-webkit-scrollbar-track { background: #111827; }
+.modal-body::-webkit-scrollbar-thumb { background: #374151; border-radius: 4px; }
+.modal-body::-webkit-scrollbar-thumb:hover { background: #a3e635; }
+/* ================================== */
+/* GLITCH EFFECT (CSS)                */
+/* ================================== */
+
+/* Animasi Glitch (memindahkan dan mewarnai teks) */
+@keyframes glitch-anim-1 {
+    0% { transform: translate(-2px, 2px) skewX(0); color: #ff00c1; }
+    5% { transform: translate(2px, -2px) skewX(2deg); color: #00ffc1; }
+    10% { transform: translate(-1px, 1px) skewX(0); color: #a3e635; } /* Kembali ke warna hijau lembut */
+    15% { transform: translate(1px, -1px) skewX(-2deg); color: #ff00c1; }
+    20% { transform: translate(0, 0) skewX(0); color: #a3e635; }
+    100% { transform: translate(0, 0) skewX(0); color: #a3e635; }
+}
+
+@keyframes glitch-anim-2 {
+    0% { transform: translate(2px, -2px) skewX(0); color: #00ffc1; }
+    5% { transform: translate(-2px, 2px) skewX(-2deg); color: #ff00c1; }
+    10% { transform: translate(1px, -1px) skewX(0); color: #a3e635; }
+    15% { transform: translate(-1px, 1px) skewX(2deg); color: #00ffc1; }
+    20% { transform: translate(0, 0) skewX(0); color: #a3e635; }
+    100% { transform: translate(0, 0) skewX(0); color: #a3e635; }
+}
+
+/* Animasi untuk efek "pixelated" atau "rusak" pada latar belakang */
+@keyframes glitch-bg {
+    0%, 100% { background-position: 0 0; filter: blur(0px); opacity: 1; }
+    5% { background-position: 5px 5px; filter: blur(0.5px); opacity: 0.8; }
+    10% { background-position: -5px -5px; filter: blur(0.7px); opacity: 0.7; }
+    15% { background-position: 0 0; filter: blur(0px); opacity: 1; }
+}
+
+/* Class untuk elemen yang akan diberi efek glitch */
+.glitch-text {
+    position: relative;
+    display: inline-block; /* Penting agar efek transformasi bekerja */
+}
+
+/* Lapisan 'pseudo-element' untuk efek glitch */
+.glitch-text::before,
+.glitch-text::after {
+    content: attr(data-text); /* Mengambil teks dari atribut data-text */
+    position: absolute;
+    top: 0;
+    left: 0;
+    width: 100%;
+    height: 100%;
+    overflow: hidden;
+    pointer-events: none; /* Agar tidak menghalangi interaksi mouse */
+}
+
+.glitch-text::before {
+    left: 2px;
+    text-shadow: -2px 0 #ff00c1; /* Warna shadow merah-magenta */
+    animation: glitch-anim-1 2s infinite alternate cubic-bezier(0.64, 0.57, 0.67, 1.53);
+    /* Animasi glitch ini akan muncul sebentar setiap beberapa detik */
+    animation-delay: 2s; /* Glitch pertama kali muncul setelah 2 detik */
+}
+
+.glitch-text::after {
+    left: -2px;
+    text-shadow: 2px 0 #00ffc1; /* Warna shadow cyan */
+    animation: glitch-anim-2 2s infinite alternate cubic-bezier(0.64, 0.57, 0.67, 1.53);
+    animation-delay: 2.2s; /* Glitch kedua muncul sedikit terlambat */
+}
+
+/* Efek glitch pada card header (opsional, hanya terjadi sesekali) */
+.hacker-theme .card-header.glitch-on-hover:hover {
+    animation: glitch-bg 0.5s linear infinite; /* Glitch saat dihover */
+}
+
+.hacker-theme .card-header.glitch-active {
+    animation: glitch-bg 0.5s linear infinite; /* Glitch saat aktif */
+}
+/* ================================== */
+/* CSS TAMBAHAN UNTUK EFEK KEREN      */
+/* ================================== */
+
+/* Efek Glow pada Teks Judul */
+.glitch-text {
+    text-shadow: 0 0 5px rgba(163, 230, 53, 0.5), 0 0 10px rgba(163, 230, 53, 0.3);
+}
+
+/* Animasi Scanline Vertikal */
+@keyframes scanline-anim {
+    0% {
+        transform: translateY(-100%);
+    }
+    100% {
+        transform: translateY(100%);
+    }
+}
+
+/* Menerapkan Scanline ke Body */
+body.hacker-theme::before {
+    content: '';
+    position: fixed;
+    top: 0;
+    left: 0;
+    width: 100%;
+    height: 100%;
+    background: linear-gradient(to bottom, transparent 0%, rgba(163, 230, 53, 0.1) 50%, transparent 100%);
+    animation: scanline-anim 10s linear infinite;
+    pointer-events: none;
+    z-index: 10;
+    opacity: 0.5;
+}
+
+/* Tambahkan ini di akhir file CSS Anda */
+
+/* Membuat area tabel bisa di-scroll jika isinya terlalu banyak */
+.table-responsive {
+    max-height: 300px; /* Batas tinggi maksimal tabel */
+    overflow-y: auto;
+}
+
+/* Kustomisasi scrollbar agar sesuai dengan hacker theme */
+.table-responsive::-webkit-scrollbar {
+    width: 8px;
+}
+
+.table-responsive::-webkit-scrollbar-track {
+    background: #1f2937; /* Warna track sama dengan latar card */
+}
+
+.table-responsive::-webkit-scrollbar-thumb {
+    background-color: #374151; /* Warna thumb scrollbar */
+    border-radius: 4px;
+    border: 2px solid #1f2937; /* Border agar ada jarak dengan track */
+}
+
+.table-responsive::-webkit-scrollbar-thumb:hover {
+    background-color: #4b5563; /* Warna saat di-hover */
+}
