@@ -1,17 +1,32 @@
 $(document).ready(function() {
+   // ===================================================================
+    // 0. HELPER FUNCTION (FORMAT RUPIAH DIBULATKAN)
     // ===================================================================
-    // 0. HELPER FUNCTION (FORMAT RUPIAH)
-    // ===================================================================
+    
     function formatRingkas(val) {
-        if (typeof val !== 'number') return val;
-        if (val >= 1000000000) return "Rp " + (val / 1000000000).toFixed(2) + " M";
-        if (val >= 1000000) return "Rp " + (val / 1000000).toFixed(2) + " Jt";
-        return "Rp " + val.toLocaleString('id-ID');
+        if (typeof val !== 'number') val = parseFloat(val); // Pastikan angka
+        if (isNaN(val)) return "Rp 0";
+
+        // Logic Pembulatan & Peringkasan
+        if (val >= 1000000000) {
+            // Milyar (M) - Ambil 2 desimal aja biar rapi (contoh: 1.15 M)
+            return "Rp " + (val / 1000000000).toFixed(2) + " M";
+        }
+        if (val >= 1000000) {
+            // Juta (Jt) - Ambil 2 desimal (contoh: 75.30 Jt)
+            return "Rp " + (val / 1000000).toFixed(2) + " Jt";
+        }
+        
+        // Di bawah 1 Juta, tampilkan angka penuh TANPA KOMA (Dibulatkan)
+        return "Rp " + Math.round(val).toLocaleString('id-ID');
     }
 
     function formatDetail(val) {
-        if (typeof val !== 'number') return val;
-        return "Rp " + val.toLocaleString('id-ID');
+        if (typeof val !== 'number') val = parseFloat(val);
+        if (isNaN(val)) return "Rp 0";
+
+        // Math.round() akan membuang koma desimal sepenuhnya (contoh: 236.291,291 -> 236.291)
+        return "Rp " + Math.round(val).toLocaleString('id-ID');
     }
 
     // ===================================================================
@@ -1654,6 +1669,315 @@ function updateSalesMrChartData() {
         link.click();
         document.body.removeChild(link);
     }
+
+    // ===================================================================
+    // X. FITUR SALES PRODUK PER KECAMATAN (HORIZONTAL SCROLL CHART)
+    // ===================================================================
+
+    // Variable Global
+    let rawKecamatanData = [];
+    let kecChart;
+    let activeKecIndex = 0; 
+
+    // Set Default Date Input (Awal bulan sampai hari ini)
+    const todayKec = new Date();
+    const yyyyKec = todayKec.getFullYear();
+    const mmKec = String(todayKec.getMonth() + 1).padStart(2, '0');
+    const ddKec = String(todayKec.getDate()).padStart(2, '0');
+    const firstDayStringKec = `${yyyyKec}-${mmKec}-01`;
+    const todayStringKec = `${yyyyKec}-${mmKec}-${ddKec}`;
+
+    if($('#filter-kec-start').length) { 
+        $('#filter-kec-start').val(firstDayStringKec); 
+        $('#filter-kec-end').val(todayStringKec); 
+    }
+
+    // --- OPSI CHART (HORIZONTAL + CUSTOM TOOLTIP FIXED) ---
+    const kecChartOptions = {
+        series: [],
+        chart: {
+            type: 'bar',
+            height: 500, // Tinggi awal
+            background: 'transparent',
+            toolbar: { show: false },
+            animations: { enabled: false }
+        },
+        plotOptions: {
+            bar: {
+                horizontal: true, 
+                barHeight: '70%', 
+                borderRadius: 2,
+                distributed: true 
+            }
+        },
+        colors: ['#008FFB', '#00E396', '#FEB019', '#FF4560', '#775DD0', '#3F51B5', '#546E7A', '#D4526E'], 
+        
+        dataLabels: {
+            enabled: true,
+            textAnchor: 'start',
+            style: { colors: ['#fff'], fontSize: '10px' },
+            formatter: function (val, opt) {
+                return "Rp " + parseFloat(val).toLocaleString('id-ID');
+            },
+            offsetX: 0,
+        },
+        stroke: { show: true, width: 1, colors: ['transparent'] },
+        xaxis: {
+            categories: [],
+            labels: { 
+                style: { colors: '#cfd8dc', fontSize: '10px' },
+                formatter: (val) => "Rp " + parseFloat(val).toLocaleString('id-ID')
+            },
+            axisBorder: { show: false }, 
+            axisTicks: { show: false }
+        },
+        yaxis: {
+            labels: { 
+                show: true,
+                style: { colors: '#e0e0e0', fontSize: '11px', fontFamily: 'sans-serif', fontWeight: 'bold' },
+                maxWidth: 250
+            }
+        },
+        grid: { 
+            borderColor: 'rgba(255, 255, 255, 0.05)', 
+            xaxis: { lines: { show: true } },   
+            yaxis: { lines: { show: false } }, 
+            padding: { left: 10, right: 30 }
+        },
+        theme: { mode: 'dark' },
+        legend: { show: false }, 
+        
+        // --- PERBAIKAN: MENGEMBALIKAN TOOLTIP DETAIL ---
+        // TOOLTIP DETAIL (UPDATE AGAR GAK KETIMPA)
+        // TOOLTIP DETAIL (FIX NYANGKUT)
+        tooltip: {
+            theme: 'dark',
+            shared: false,
+            intersect: true,
+            // [PENTING] Matikan fixed agar tooltip mengikuti bar yang di-hover
+            fixed: {
+                enabled: false 
+            },
+            // [PENTING] Ikuti cursor mouse agar tidak ketutup
+            followCursor: true, 
+            
+            // Custom HTML Tooltip
+            custom: function({series, seriesIndex, dataPointIndex, w}) {
+                // Ambil data detail (pastikan index valid)
+                let productDetail = rawKecamatanData[activeKecIndex].chart_data[dataPointIndex];
+                
+                if (!productDetail) return '';
+
+                const fmtRp = (val) => "Rp " + parseFloat(val).toLocaleString('id-ID');
+                const fmtNum = (val) => parseFloat(val).toLocaleString('id-ID');
+
+                return `
+                    <div class="p-2" style="background: #1e2226; border: 1px solid #e83e8c; border-radius: 6px; box-shadow: 0 5px 15px rgba(0,0,0,0.5); z-index: 9999;">
+                        <div class="font-weight-bold text-white mb-2 pb-1 border-bottom border-secondary" style="font-size: 11px; max-width: 200px; white-space: normal; line-height: 1.3;">
+                            ${productDetail.name}
+                        </div>
+                        <div style="font-size: 11px;">
+                            <div class="d-flex justify-content-between mb-1">
+                                <span class="text-muted">Sales:</span>
+                                <span class="text-info font-weight-bold ml-2">${fmtRp(productDetail.sales)}</span>
+                            </div>
+                            <div class="d-flex justify-content-between mb-1">
+                                <span class="text-muted">Margin:</span>
+                                <span class="text-warning font-weight-bold ml-2">${fmtRp(productDetail.margin)}</span>
+                            </div>
+                            <div class="d-flex justify-content-between mb-1">
+                                <span class="text-muted">Qty:</span>
+                                <span class="text-success font-weight-bold ml-2">${fmtNum(productDetail.qty)}</span>
+                            </div>
+                            <div class="d-flex justify-content-between">
+                                <span class="text-muted">Trx:</span>
+                                <span class="text-white font-weight-bold ml-2">${fmtNum(productDetail.trx)}</span>
+                            </div>
+                        </div>
+                    </div>
+                `;
+            }
+        }
+    };
+
+    // Init Chart
+    if(document.querySelector("#chart-kecamatan")) {
+        kecChart = new ApexCharts(document.querySelector("#chart-kecamatan"), kecChartOptions);
+        kecChart.render();
+        loadKecamatanData(); // Load data awal
+    }
+
+    // Event Klik Filter
+    $('#btn-filter-kec').click(function() {
+        loadKecamatanData();
+    });
+
+    // Fungsi Fetch Data API
+    function loadKecamatanData() {
+        let s = $('#filter-kec-start').val();
+        let e = $('#filter-kec-end').val();
+        
+        $('#nav-kecamatan-container').html('<div class="d-flex align-items-center text-muted"><span class="spinner-border spinner-border-sm text-pink mr-2"></span>Sedang memuat data...</div>');
+        $('#chart-kecamatan').css('opacity', 0.5);
+
+        $.ajax({
+            url: 'dashboard/api_get_sales_produk_perkecamatan.php',
+            type: 'GET',
+            data: { start_date: s, end_date: e },
+            dataType: 'json',
+            success: function(res) {
+                $('#chart-kecamatan').css('opacity', 1);
+                
+                if(res.status === 'success') {
+                    $('#pk-global-sales').text(formatRingkas(res.global.sales));
+                    $('#pk-global-margin').text(formatRingkas(res.global.margin));
+                    
+                    rawKecamatanData = res.data;
+                    renderKecamatanNav();
+
+                    if(rawKecamatanData.length > 0) {
+                        renderKecamatanDetail(0); 
+                    } else {
+                        $('#nav-kecamatan-container').html('<span class="text-muted font-italic ml-2">Tidak ada data.</span>');
+                        resetKecamatanDetail();
+                    }
+                } else {
+                    $('#nav-kecamatan-container').html(`<span class="text-danger ml-2">${res.message}</span>`);
+                }
+            },
+            error: function(xhr, status, error) {
+                console.error("AJAX Error:", error);
+                $('#nav-kecamatan-container').html('<span class="text-danger ml-2">Gagal memuat data.</span>');
+                $('#chart-kecamatan').css('opacity', 1);
+            }
+        });
+    }
+
+   // 1. Fungsi Render Tombol Navigasi (Updated Event Click)
+    function renderKecamatanNav() {
+        let container = $('#nav-kecamatan-container');
+        container.empty();
+
+        // Spacer
+        container.append('<div style="flex: 0 0 5px;"></div>');
+
+        rawKecamatanData.forEach((item, index) => {
+            let btn = `<button class="btn btn-outline-secondary btn-kec-nav" data-index="${index}">
+                        ${item.kecamatan}
+                       </button>`;
+            container.append(btn);
+        });
+
+        container.append('<div style="flex: 0 0 10px;"></div>');
+
+        // --- EVENT LISTENER DENGAN LOADING ---
+        $('.btn-kec-nav').off('click').on('click', function() {
+            let btn = $(this);
+            let idx = btn.data('index');
+
+            // Cek jika tombol yang diklik sudah aktif, jangan lakukan apa-apa
+            if(btn.hasClass('active')) return;
+
+            // 1. TAMPILKAN LOADING
+            $('#kecamatan-loader').addClass('show');
+
+            // 2. Update UI Tombol Langsung (Biar responsif)
+            $('.btn-kec-nav').removeClass('active');
+            btn.addClass('active');
+
+            // 3. GUNAKAN SETTIMEOUT
+            // Ini triknya: Beri jeda 50ms agar browser sempat merender 
+            // animasi loading SEBELUM menjalankan proses berat render chart/list.
+            setTimeout(() => {
+                renderKecamatanDetail(idx);
+                
+                // 4. SEMBUNYIKAN LOADING
+                // Beri sedikit buffer (300ms) biar animasinya kelihatan smooth (tidak kedip)
+                setTimeout(() => {
+                    $('#kecamatan-loader').removeClass('show');
+                }, 300);
+                
+            }, 50); 
+        });
+    }
+
+    // 2. Fungsi Render Detail (Tetap sama, tapi dipanggil via Timeout di atas)
+    function renderKecamatanDetail(index) {
+        activeKecIndex = index;
+        let d = rawKecamatanData[index];
+        if(!d) return;
+
+        // Note: Update tombol active sudah dilakukan di event listener di atas
+
+        // Update Summary Cards
+        $('#pk-selected-name').text(d.kecamatan);
+        $('#pk-trx-count').text(parseInt(d.summary.trx).toLocaleString('id-ID') + ' Trx');
+        $('#pk-select-sales').text(formatRingkas(d.summary.sales));
+        $('#pk-select-margin').text(formatRingkas(d.summary.margin));
+        $('#pk-select-avg').text(formatDetail(d.summary.avg_sales));
+
+        // Render List Top Qty
+        let listQty = $('#list-top-qty').empty();
+        if(d.top_products_qty.length === 0) {
+            listQty.append('<div class="text-muted p-3 text-center" style="font-size:11px;">Belum ada data.</div>');
+        } else {
+            d.top_products_qty.forEach((p, idx) => {
+                let rankClass = idx === 0 ? 'rank-1' : (idx === 1 ? 'rank-2' : (idx === 2 ? 'rank-3' : 'rank-other'));
+                let valQty = parseFloat(p.qty).toLocaleString('id-ID');
+                listQty.append(`
+                    <div class="list-item-product">
+                        <div class="rank-badge ${rankClass}">${idx + 1}</div>
+                        <div class="product-name" title="${p.name}">${p.name}</div>
+                        <div class="product-value text-success">${valQty}</div>
+                    </div>
+                `);
+            });
+        }
+
+       // Render List Top Sales
+        let listSales = $('#list-top-sales').empty();
+        if(d.top_products_sales.length === 0) {
+            listSales.append('<div class="text-muted p-3 text-center" style="font-size:11px;">Belum ada data.</div>');
+        } else {
+            d.top_products_sales.forEach((p, idx) => {
+                let rankClass = idx === 0 ? 'rank-1' : (idx === 1 ? 'rank-2' : (idx === 2 ? 'rank-3' : 'rank-other'));
+                let valSales = formatRingkas(p.sales).replace("Rp ", "");
+                listSales.append(`
+                    <div class="list-item-product">
+                        <div class="rank-badge ${rankClass}">${idx + 1}</div>
+                        <div class="product-name" title="${p.name}">${p.name}</div>
+                        <div class="product-value text-info">${valSales}</div>
+                    </div>
+                `);
+            });
+        }
+
+        // Update Chart
+        let categories = d.chart_data.map(x => x.name);
+        let seriesData = d.chart_data.map(x => x.sales);
+
+        // Hitung tinggi dinamis
+        let dynamicHeight = categories.length * 35; 
+        if (dynamicHeight < 350) dynamicHeight = 350;
+
+        kecChart.updateOptions({
+            chart: { height: dynamicHeight },
+            xaxis: { categories: categories }
+        });
+        
+        kecChart.updateSeries([{ name: 'Sales', data: seriesData }], true);
+    }
+
+    function resetKecamatanDetail() {
+        activeKecIndex = -1;
+        $('#pk-selected-name').text('DATA KOSONG');
+        $('#pk-trx-count').text('0 Trx');
+        $('#pk-select-sales, #pk-select-margin, #pk-select-avg').text('Rp 0');
+        $('#list-top-qty, #list-top-sales').empty().append('<li class="text-muted font-italic">---</li>');
+        kecChart.updateSeries([{name:'Sales', data:[]}]);
+        kecChart.updateOptions({xaxis: { categories: [] }});
+    }
+
     function updateAreaChartData() { fetch("dashboard/api_get_grafik.php").then(r=>r.json()).then(d=>{ if(!d||!d.tanggal)return; apexAreaChart.updateOptions({series:[{name:'Sales',data:d.sales},{name:'Margin',data:d.margin}],xaxis:{categories:d.tanggal.map(x=>new Date(x).toLocaleDateString('id-ID',{day:'2-digit',month:'short'}))}}); }); }
     function updateDistanceChartData() { fetch("detailmember/api_get_jarak.php").then(r=>r.json()).then(r=>{ distanceDonutChart.updateOptions({labels:r.data.map(x=>x.kategori_jarak),series:r.data.map(x=>parseInt(x.jumlah_member))}); }); }
     function updateMonthlyChartData() { fetch("dashboard/api_get_grafik_perbulan.php").then(r=>r.json()).then(d=>{ monthlyChart.updateOptions({ series:[{name: 'Sales', data:d.sales}, {name: 'Margin', data:d.margin}], xaxis:{categories:d.bulan} }); }); }
