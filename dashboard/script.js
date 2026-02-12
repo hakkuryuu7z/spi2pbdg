@@ -1692,15 +1692,29 @@ function updateSalesMrChartData() {
         $('#filter-kec-end').val(todayStringKec); 
     }
 
-    // --- OPSI CHART (HORIZONTAL + CUSTOM TOOLTIP FIXED) ---
+    $(document).on('mousemove', function(e) {
+        // Update posisi tooltip mengikuti mouse
+        $('#floating-tooltip').css({
+            top: e.clientY + 15 + 'px', // Sedikit di bawah cursor
+            left: e.clientX + 15 + 'px' // Sedikit di kanan cursor
+        });
+    });
+
+    // --- OPSI CHART (HORIZONTAL + EXTERNAL TOOLTIP) ---
     const kecChartOptions = {
         series: [],
         chart: {
             type: 'bar',
-            height: 500, // Tinggi awal
+            height: 500,
             background: 'transparent',
             toolbar: { show: false },
-            animations: { enabled: false }
+            animations: { enabled: false },
+            events: {
+                // Sembunyikan tooltip saat mouse keluar dari area chart
+                mouseLeave: function() {
+                    $('#floating-tooltip').hide();
+                }
+            }
         },
         plotOptions: {
             bar: {
@@ -1711,14 +1725,11 @@ function updateSalesMrChartData() {
             }
         },
         colors: ['#008FFB', '#00E396', '#FEB019', '#FF4560', '#775DD0', '#3F51B5', '#546E7A', '#D4526E'], 
-        
         dataLabels: {
             enabled: true,
             textAnchor: 'start',
             style: { colors: ['#fff'], fontSize: '10px' },
-            formatter: function (val, opt) {
-                return "Rp " + parseFloat(val).toLocaleString('id-ID');
-            },
+            formatter: function (val, opt) { return "Rp " + parseFloat(val).toLocaleString('id-ID'); },
             offsetX: 0,
         },
         stroke: { show: true, width: 1, colors: ['transparent'] },
@@ -1747,55 +1758,53 @@ function updateSalesMrChartData() {
         theme: { mode: 'dark' },
         legend: { show: false }, 
         
-        // --- PERBAIKAN: MENGEMBALIKAN TOOLTIP DETAIL ---
-        // TOOLTIP DETAIL (UPDATE AGAR GAK KETIMPA)
-        // TOOLTIP DETAIL (FIX NYANGKUT)
+        // --- TOOLTIP LOGIC BARU ---
         tooltip: {
-            theme: 'dark',
+            enabled: true, // Biarkan enabled trigger-nya
             shared: false,
             intersect: true,
-            // [PENTING] Matikan fixed agar tooltip mengikuti bar yang di-hover
-            fixed: {
-                enabled: false 
-            },
-            // [PENTING] Ikuti cursor mouse agar tidak ketutup
-            followCursor: true, 
-            
-            // Custom HTML Tooltip
+            // Kita matikan render default-nya dengan me-return string kosong
+            // Tapi kita isi konten ke #floating-tooltip
             custom: function({series, seriesIndex, dataPointIndex, w}) {
-                // Ambil data detail (pastikan index valid)
                 let productDetail = rawKecamatanData[activeKecIndex].chart_data[dataPointIndex];
-                
-                if (!productDetail) return '';
+                if (!productDetail) {
+                    $('#floating-tooltip').hide();
+                    return ''; 
+                }
 
-                const fmtRp = (val) => "Rp " + parseFloat(val).toLocaleString('id-ID');
-                const fmtNum = (val) => parseFloat(val).toLocaleString('id-ID');
+                const fmtRp = (val) => "Rp " + Math.round(parseFloat(val)).toLocaleString('id-ID');
+                const fmtNum = (val) => Math.round(parseFloat(val)).toLocaleString('id-ID');
 
-                return `
-                    <div class="p-2" style="background: #1e2226; border: 1px solid #e83e8c; border-radius: 6px; box-shadow: 0 5px 15px rgba(0,0,0,0.5); z-index: 9999;">
-                        <div class="font-weight-bold text-white mb-2 pb-1 border-bottom border-secondary" style="font-size: 11px; max-width: 200px; white-space: normal; line-height: 1.3;">
+                // Isi HTML ke Container Luar
+                let htmlContent = `
+                    <div class="p-3 text-white">
+                        <div class="font-weight-bold mb-2 pb-2 border-bottom border-secondary" style="font-size: 12px; line-height: 1.3;">
                             ${productDetail.name}
                         </div>
                         <div style="font-size: 11px;">
                             <div class="d-flex justify-content-between mb-1">
                                 <span class="text-muted">Sales:</span>
-                                <span class="text-info font-weight-bold ml-2">${fmtRp(productDetail.sales)}</span>
+                                <span class="text-info font-weight-bold ml-3">${fmtRp(productDetail.sales)}</span>
                             </div>
                             <div class="d-flex justify-content-between mb-1">
                                 <span class="text-muted">Margin:</span>
-                                <span class="text-warning font-weight-bold ml-2">${fmtRp(productDetail.margin)}</span>
+                                <span class="text-warning font-weight-bold ml-3">${fmtRp(productDetail.margin)}</span>
                             </div>
                             <div class="d-flex justify-content-between mb-1">
-                                <span class="text-muted">Qty:</span>
-                                <span class="text-success font-weight-bold ml-2">${fmtNum(productDetail.qty)}</span>
+                                <span class="text-muted">Total Qty:</span>
+                                <span class="text-success font-weight-bold ml-3">${fmtNum(productDetail.qty)} Pcs</span>
                             </div>
                             <div class="d-flex justify-content-between">
-                                <span class="text-muted">Trx:</span>
-                                <span class="text-white font-weight-bold ml-2">${fmtNum(productDetail.trx)}</span>
+                                <span class="text-muted">Transaksi:</span>
+                                <span class="text-white font-weight-bold ml-3">${fmtNum(productDetail.trx)} Struk</span>
                             </div>
                         </div>
                     </div>
                 `;
+
+                $('#floating-tooltip').html(htmlContent).show();
+                
+                return ''; // Return kosong agar chart tidak render tooltip bawaan
             }
         }
     };

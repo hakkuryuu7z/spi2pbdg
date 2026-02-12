@@ -506,6 +506,7 @@
     </div>
 
     <?php include "modal.php" ?>
+    <div id="floating-tooltip"></div>
 </div>
 
 <script src="jquery/jquery-3.7.1.min.js"></script>

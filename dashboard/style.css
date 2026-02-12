@@ -261,3 +261,20 @@
 .glow-margin { color: #ffca2c !important; text-shadow: 0 0 8px rgba(255, 202, 44, 0.6); font-weight: bold; }
 .glow-ongkir { color: #ff4d4d !important; text-shadow: 0 0 8px rgba(255, 77, 77, 0.6); font-weight: bold; }
 .glow-ratio  { color: #ff66b2 !important; text-shadow: 0 0 8px rgba(255, 102, 178, 0.6); font-weight: bold; }
+/* --- TOOLTIP MELAYANG ANTI-POTONG --- */
+#floating-tooltip {
+    position: fixed;          /* Selalu mengambang relatif terhadap layar */
+    z-index: 99999999 !important; /* Layer paling atas */
+    display: none;            /* Sembunyi default */
+    pointer-events: none;     /* Mouse bisa tembus (gak ngehalangin klik) */
+    
+    /* Styling Tampilan */
+    background: #1e2226;
+    border: 1px solid #e83e8c; /* Border Pink */
+    border-radius: 8px;
+    box-shadow: 0 10px 40px rgba(0,0,0,0.8);
+    padding: 0;
+    width: auto;
+    max-width: 250px;
+    transition: top 0.1s ease, left 0.1s ease; /* Gerakan halus */
+}
