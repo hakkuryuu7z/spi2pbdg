@@ -36,9 +36,9 @@ $sql = "
         z.dtl_nama_barang,
         COUNT(DISTINCT(z.dtl_struk))    AS jumlah_transaksi,
         SUM(z.dtl_qty_pcs)              AS total_qty_pcs,
-        SUM(z.dtl_gross)                AS total_gross,
-        SUM(z.dtl_netto)                AS total_netto,
-        SUM(z.dtl_margin)               AS total_margin
+        SUM(ROUND(z.dtl_gross))                AS total_gross,
+        SUM(ROUND(z.dtl_netto))                AS total_netto,
+        SUM(ROUND(z.dtl_margin))               AS total_margin
     FROM
         (
             SELECT
@@ -61,7 +61,7 @@ $sql = "
                         substr(trjd_prdcd, 1, length(trjd_prdcd)-1) || '0' AS dtl_prdcd,
                         prd_deskripsipanjang                             AS dtl_nama_barang,
                         trjd_transactiontype                             AS dtl_rtype,
-                        coalesce(crm_kecamatan_usaha, 'LAIN-LAIN')       AS dtl_kecamatan,
+                        UPPER(coalesce(crm_kecamatan_usaha, 'LAIN-LAIN'))       AS dtl_kecamatan,
                         CASE WHEN prd_unit = 'KG' AND prd_frac = 1000 THEN trjd_quantity ELSE trjd_quantity * prd_frac END AS dtl_qty_pcs,
                         CASE WHEN trjd_flagtax1 = 'Y' AND trjd_create_by IN ( 'IDM', 'OMI', 'BKL' ) THEN trjd_nominalamt * 11.1 / 10 ELSE trjd_nominalamt END AS dtl_gross,
                         CASE WHEN trjd_divisioncode = '5' AND substr(trjd_division, 1, 2) = '39' THEN CASE WHEN 'Y' = 'Y' THEN trjd_nominalamt END ELSE CASE WHEN coalesce(tko_kodesbu, 'z') IN ( 'O', 'I' ) THEN CASE WHEN tko_tipeomi IN ( 'HE', 'HG' ) THEN trjd_nominalamt - ( CASE WHEN trjd_flagtax1 = 'Y' AND coalesce(trjd_flagtax2, 'z') IN ( 'Y', 'z' ) AND coalesce(prd_kodetag, 'zz') <> 'Q' THEN ( trjd_nominalamt - ( trjd_nominalamt / ( 1 + ( coalesce(prd_ppn, 10) / 100 ) ) ) ) ELSE 0 END ) ELSE trjd_nominalamt END ELSE trjd_nominalamt - ( CASE WHEN substr(trjd_create_by, 1, 2) = 'EX' THEN 0 ELSE CASE WHEN trjd_flagtax1 = 'Y' AND coalesce(trjd_flagtax2, 'z') IN ( 'Y', 'z' ) AND coalesce(prd_kodetag, 'zz') <> 'Q' THEN ( trjd_nominalamt - ( trjd_nominalamt / ( 1 + ( coalesce(prd_ppn, 10) / 100 ) ) ) ) ELSE 0 END END ) END END AS dtl_netto,
@@ -191,7 +191,7 @@ foreach ($data_by_kecamatan as $kec_name => $kec_data) {
     $top_sales = array_slice($products_by_sales, 0, 100);
 
     // Chart Data tetap ambil 10 atau 15 agar grafik tidak terlalu padat
-    $chart_data = array_slice($products_by_sales, 0, 1000);
+    $chart_data = array_slice($products_by_sales, 0, 100);
 
     $final_data[] = [
         'kecamatan'    => $kec_name,
