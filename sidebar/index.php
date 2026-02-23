@@ -21,8 +21,6 @@ $current_page = basename($_SERVER['PHP_SELF']);
 
         // 1. ROLE: CHECKER
         if (isset($_SESSION['role']) && $_SESSION['role'] == 'checker') :
-
-          // Definisi variabel active KHUSUS Checker (Wajib ada biar gak error)
           $realisasi_active = ($current_page == 'realisasislp.php') ? 'active' : '';
           $sales_active     = ($current_page == 'salesdetail.php') ? 'active' : '';
         ?>
@@ -41,19 +39,9 @@ $current_page = basename($_SERVER['PHP_SELF']);
             </a>
           </li>
 
-          <li class="nav-header">AKUN</li>
-          <li class="nav-item">
-            <a href="logout.php" class="nav-link">
-              <i class="nav-icon fas fa-sign-out-alt"></i>
-              <p>Logout</p>
-            </a>
-          </li>
-
         <?php
-        // 2. ROLE: MR (Medical Representative)
+        // 2. ROLE: MR
         elseif (isset($_SESSION['role']) && $_SESSION['role'] == 'mr') :
-
-          // Definisi variabel active KHUSUS MR (Wajib ada biar gak error)
           $target_mr_active = ($current_page == 'targetmr.php') ? 'active' : '';
           $member_active    = ($current_page == 'memberdetail.php') ? 'active' : '';
         ?>
@@ -71,25 +59,17 @@ $current_page = basename($_SERVER['PHP_SELF']);
             </a>
           </li>
 
-          <li class="nav-header">AKUN</li>
-          <li class="nav-item">
-            <a href="logout.php" class="nav-link">
-              <i class="nav-icon fas fa-sign-out-alt"></i>
-              <p>Logout</p>
-            </a>
-          </li>
-
         <?php
-        // 3. ROLE: ADMIN (Default)
+        // 3. ROLE: ADMIN
         else :
-
-          // Definisi variabel active KHUSUS ADMIN
-          // --- 1. SET AKTIF UNTUK MENU UTAMA (LEVEL 1) ---
           $dashboard_active = ($current_page == 'index.php') ? 'active' : '';
-
           $data_utama_pages = ['memberdetail.php', 'salesdetail.php'];
           $data_utama_active = in_array($current_page, $data_utama_pages) ? 'active' : '';
           $data_utama_open = in_array($current_page, $data_utama_pages) ? 'menu-open' : '';
+
+          $data_evaluasi_pages = ['ongkir_vs_margin.php'];
+          $data_evaluasi_active = in_array($current_page, $data_evaluasi_pages) ? 'active' : '';
+          $data_evaluasi_open = in_array($current_page, $data_evaluasi_pages) ? 'menu-open' : '';
 
           $edp_pages = ['cekpagi.php', 'monitoringoperasi.php', 'realisasislp.php', 'cek_data_struk.php', 'cekhjk.php'];
           $edp_page_active = in_array($current_page, $edp_pages) ? 'active' : '';
@@ -99,9 +79,15 @@ $current_page = basename($_SERVER['PHP_SELF']);
           $simulasi_page_active = in_array($current_page, $simulasi_pages) ? 'active' : '';
           $simulasi_page_open = in_array($current_page, $simulasi_pages) ? 'menu-open' : '';
 
-          $music_active = ($current_page == 'music.php') ? 'active' : '';
+          $is_product_edp = (strpos($_SERVER['REQUEST_URI'], 'spotifypremiumindogrosir') !== false ||
+            strpos($_SERVER['REQUEST_URI'], 'tarik_laporan') !== false ||
+            strpos($_SERVER['REQUEST_URI'], 'test_ping') !== false ||
+            strpos($_SERVER['REQUEST_URI'], 'FTP_HO') !== false ||
+            strpos($_SERVER['REQUEST_URI'], 'bot_wa') !== false);
+          $product_edp_open = $is_product_edp ? 'menu-open' : '';
+          $product_edp_active = $is_product_edp ? 'active' : '';
 
-          // --- 2. SET AKTIF UNTUK SUB-MENU (LEVEL 2) ---
+          $music_active = ($current_page == 'music.php') ? 'active' : '';
           $cek_pagi_active = ($current_page == 'cekpagi.php') ? 'active' : '';
           $monitoring_active = ($current_page == 'monitoringoperasi.php') ? 'active' : '';
           $target_mr_active = ($current_page == 'targetmr.php') ? 'active' : '';
@@ -111,6 +97,8 @@ $current_page = basename($_SERVER['PHP_SELF']);
           $DSI_SIMUL_active = ($current_page == 'monitoring_pareto.php') ? 'active' : '';
           $sales_active = ($current_page == 'salesdetail.php') ? 'active' : '';
           $hjk_active = ($current_page == 'cekhjk.php') ? 'active' : '';
+          $ongkir_vs_margin = ($current_page == 'ongkir_vs_margin.php') ? 'active' : '';
+
         ?>
 
           <li class="nav-item">
@@ -123,22 +111,26 @@ $current_page = basename($_SERVER['PHP_SELF']);
           <li class="nav-item has-treeview <?php echo $data_utama_open; ?>">
             <a href="#" class="nav-link <?php echo $data_utama_active; ?>">
               <i class="nav-icon fas fa-database"></i>
-              <p>
-                Data Utama
-                <i class="right fas fa-angle-left"></i>
-              </p>
+              <p>Data Utama <i class="right fas fa-angle-left"></i></p>
             </a>
             <ul class="nav nav-treeview">
-              <li class="nav-item">
-                <a href="#" data-url="memberdetail.php" class="nav-link confirm-link <?php echo $member_active; ?>">
-                  <i class="far fa-address-card nav-icon"></i>
+              <li class="nav-item"><a href="#" data-url="memberdetail.php" class="nav-link confirm-link <?php echo $member_active; ?>"><i class="far fa-address-card nav-icon"></i>
                   <p>Detail Member</p>
-                </a>
-              </li>
-              <li class="nav-item">
-                <a href="#" data-url="salesdetail.php" class="nav-link confirm-link <?php echo $sales_active; ?>">
-                  <i class="fas fa-wallet nav-icon"></i>
+                </a></li>
+              <li class="nav-item"><a href="#" data-url="salesdetail.php" class="nav-link confirm-link <?php echo $sales_active; ?>"><i class="fas fa-wallet nav-icon"></i>
                   <p>Detail Sales Kasir</p>
+                </a></li>
+            </ul>
+          </li>
+
+          <li class="nav-item has-treeview <?php echo $data_evaluasi_open; ?>">
+            <a href="#" class="nav-link <?php echo $data_evaluasi_active; ?>">
+              <i class="nav-icon fas fa-search-dollar"></i>
+              <p>Evaluasi <i class="right fas fa-angle-left"></i></p>
+            </a>
+            <ul class="nav nav-treeview">
+              <li class="nav-item"><a href="#" data-url="ongkir_vs_margin.php" class="nav-link confirm-link <?php echo $ongkir_vs_margin; ?>"><i class="fas fa-hand-holding-usd nav-icon"></i>
+                  <p>Ongkir VS Margin</p>
                 </a>
               </li>
             </ul>
@@ -147,103 +139,79 @@ $current_page = basename($_SERVER['PHP_SELF']);
           <li class="nav-item has-treeview <?php echo $edp_page_open; ?>">
             <a href="#" class="nav-link <?php echo $edp_page_active; ?>">
               <i class="nav-icon fas fa-shield-alt"></i>
-              <p>
-                OPR EDP
-                <i class="right fas fa-angle-left"></i>
-              </p>
+              <p>OPR EDP <i class="right fas fa-angle-left"></i></p>
             </a>
             <ul class="nav nav-treeview">
-              <li class="nav-item">
-                <a href="#" data-url="cekpagi.php" class="nav-link confirm-link <?php echo $cek_pagi_active; ?>">
-                  <i class="fas fa-wrench nav-icon"></i>
+              <li class="nav-item"><a href="#" data-url="cekpagi.php" class="nav-link confirm-link <?php echo $cek_pagi_active; ?>"><i class="fas fa-wrench nav-icon"></i>
                   <p>CEK SETING</p>
-                </a>
-              </li>
-              <li class="nav-item">
-                <a href="#" data-url="monitoringoperasi.php" class="nav-link confirm-link <?php echo $monitoring_active; ?>">
-                  <i class="fas fa-cogs nav-icon"></i>
+                </a></li>
+              <li class="nav-item"><a href="#" data-url="monitoringoperasi.php" class="nav-link confirm-link <?php echo $monitoring_active; ?>"><i class="fas fa-cogs nav-icon"></i>
                   <p>MONITORING DB</p>
-                </a>
-              </li>
-              <li class="nav-item">
-                <a href="#" data-url="realisasislp.php" class="nav-link confirm-link <?php echo $realisasi_active; ?>">
-                  <i class="fas fa-barcode nav-icon"></i>
+                </a></li>
+              <li class="nav-item"><a href="#" data-url="realisasislp.php" class="nav-link confirm-link <?php echo $realisasi_active; ?>"><i class="fas fa-barcode nav-icon"></i>
                   <p>MONITORING SLP</p>
-                </a>
-              </li>
-              <li class="nav-item">
-                <a href="#" data-url="cek_data_struk.php" class="nav-link confirm-link <?php echo $struk_active; ?>">
-                  <i class="fas fa-receipt nav-icon"></i>
+                </a></li>
+              <li class="nav-item"><a href="#" data-url="cek_data_struk.php" class="nav-link confirm-link <?php echo $struk_active; ?>"><i class="fas fa-receipt nav-icon"></i>
                   <p>MONITORING STRUK</p>
-                </a>
-              </li>
-              <li class="nav-item">
-                <a href="#" data-url="cekhjk.php" class="nav-link confirm-link <?php echo $hjk_active; ?>">
-                  <i class="fas fa-star"></i>
+                </a></li>
+              <li class="nav-item"><a href="#" data-url="cekhjk.php" class="nav-link confirm-link <?php echo $hjk_active; ?>"><i class="fas fa-star"></i>
                   <p>CEK ITEM HJK</p>
-                </a>
-              </li>
+                </a></li>
             </ul>
           </li>
 
           <li class="nav-item has-treeview <?php echo $simulasi_page_open; ?>">
             <a href="#" class="nav-link <?php echo $simulasi_page_active; ?>">
               <i class="nav-icon fa fa-robot"></i>
-              <p>
-                SIMULASI
-                <i class="right fas fa-angle-left"></i>
-              </p>
+              <p>SIMULASI <i class="right fas fa-angle-left"></i></p>
             </a>
             <ul class="nav nav-treeview">
-              <li class="nav-item">
-                <a href="#" data-url="monitoring_pareto.php" class="nav-link confirm-link <?php echo $DSI_SIMUL_active; ?>">
-                  <i class="fas fa-flask nav-icon"></i>
+              <li class="nav-item"><a href="#" data-url="monitoring_pareto.php" class="nav-link confirm-link <?php echo $DSI_SIMUL_active; ?>"><i class="fas fa-flask nav-icon"></i>
                   <p>MONITORING PARETO</p>
-                </a>
-              </li>
-              <li class="nav-item">
-                <a href="#" data-url="targetmr.php" class="nav-link confirm-link <?php echo $target_mr_active; ?>">
-                  <i class="fas fa-headset nav-icon"></i>
+                </a></li>
+              <li class="nav-item"><a href="#" data-url="targetmr.php" class="nav-link confirm-link <?php echo $target_mr_active; ?>"><i class="fas fa-headset nav-icon"></i>
                   <p>MONITORING MR</p>
-                </a>
-              </li>
+                </a></li>
             </ul>
           </li>
 
-          <li class="nav-item">
-            <a href="../spotifypremiumindogrosir/index.php" target="_blank" class="nav-link <?php echo $music_active; ?>">
-              <i class="nav-icon fas fa-music"></i>
-              <p>Music (SPI)</p>
+          <li class="nav-item has-treeview <?php echo $product_edp_open; ?>">
+            <a href="#" class="nav-link <?php echo $product_edp_active; ?>">
+              <i class="nav-icon fas fa-boxes"></i>
+              <p>ProductEDP <i class="right fas fa-angle-left"></i></p>
             </a>
-          </li>
-          <li class="nav-item">
-            <a href="../tarik_laporan/index.php" target="_blank" class="nav-link">
-              <i class="nav-icon fas fa-download"></i>
-              <p>Tarik Data Laporan</p>
-            </a>
-          </li>
-          <li class="nav-item">
-            <a href="../test_ping/index.php" target="_blank" class="nav-link">
-              <i class="nav-icon fas fa-satellite-dish"></i>
-              <p>Test Ping</p>
-            </a>
-          </li>
-          <li class="nav-item">
-            <a href="../FTP_HO_BY白竜7z/index.php" target="_blank" class="nav-link">
-              <i class="nav-icon fas fa-hdd"></i>
-              <p>FTP HO</p>
-            </a>
-          </li>
-          <li class="nav-item">
-            <a href="../bot_wa/admin.html" target="_blank" class="nav-link">
-              <i class="nav-icon fas fa-bullhorn"></i>
-              <p>WA BLAST</p>
-            </a>
+            <ul class="nav nav-treeview">
+              <li class="nav-item"><a href="../spotifypremiumindogrosir/index.php" target="_blank" class="nav-link"><i class="nav-icon fas fa-music"></i>
+                  <p>Music (SPI)</p>
+                </a></li>
+              <li class="nav-item"><a href="../tarik_laporan/index.php" target="_blank" class="nav-link"><i class="nav-icon fas fa-download"></i>
+                  <p>Tarik Data Laporan</p>
+                </a></li>
+              <li class="nav-item"><a href="../test_ping/index.php" target="_blank" class="nav-link"><i class="nav-icon fas fa-satellite-dish"></i>
+                  <p>Test Ping</p>
+                </a></li>
+              <li class="nav-item"><a href="../FTP_HO_BY白竜7z/index.php" target="_blank" class="nav-link"><i class="nav-icon fas fa-hdd"></i>
+                  <p>FTP HO</p>
+                </a></li>
+              <li class="nav-item"><a href="../bot_wa/admin.html" target="_blank" class="nav-link"><i class="nav-icon fas fa-bullhorn"></i>
+                  <p>WA BLAST</p>
+                </a></li>
+            </ul>
           </li>
 
         <?php
-        endif; // Tutup IF utama
+        endif;
         ?>
+
+        <?php if (isset($_SESSION['role'])) : ?>
+          <li class="nav-header">AKUN</li>
+          <li class="nav-item">
+            <a href="logout.php" class="nav-link">
+              <i class="nav-icon fas fa-sign-out-alt"></i>
+              <p>Logout</p>
+            </a>
+          </li>
+        <?php endif; ?>
 
       </ul>
     </nav>
