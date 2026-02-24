@@ -348,7 +348,7 @@
             </div>
         </div>
     </div>
-    <div class="row mb-4">
+    <!-- <div class="row mb-4">
         <div class="col-12">
             <div class="card chart-card">
                 <div class="card-header" style="background: #212529; color: white; border-bottom: 1px solid #444;">
@@ -377,7 +377,7 @@
                 </div>
             </div>
         </div>
-    </div>
+    </div> -->
 
     <div class="row mt-4">
         <div class="col-12">

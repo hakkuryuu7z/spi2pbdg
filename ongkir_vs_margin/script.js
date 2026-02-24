@@ -120,12 +120,12 @@ document.addEventListener("DOMContentLoaded", function () {
                     ongkirMarginChart.updateOptions({ xaxis: { categories: res.chart.categories } });
                     ongkirMarginChart.updateSeries(res.chart.series);
 
-                    // Update Box Summary
+                   // Update Box Summary
                     let sum = res.summary;
                     let ratioColor = parseFloat(sum.total_ratio_persen) > 10 ? 'text-danger' : 'text-success'; 
 
                     let html = `
-                        <div class="col-md-4 px-1 mb-2">
+                        <div class="col-lg col-md-4 col-sm-6 px-1 mb-2">
                             <div class="p-3 rounded h-100" style="background: linear-gradient(135deg, rgba(255, 69, 96, 0.1) 0%, rgba(0,0,0,0) 100%); border-left: 4px solid #FF4560;">
                                 <span class="text-muted text-uppercase font-weight-bold" style="font-size: 10px;">TOTAL ONGKIR</span>
                                 <h3 class="mb-0 font-weight-bold text-white mt-1">${formatRingkas(sum.total_ongkir).replace("Rp ", "")}</h3>
@@ -135,7 +135,7 @@ document.addEventListener("DOMContentLoaded", function () {
                             </div>
                         </div>
 
-                        <div class="col-md-4 px-1 mb-2">
+                        <div class="col-lg col-md-4 col-sm-6 px-1 mb-2">
                             <div class="p-3 rounded h-100" style="background: linear-gradient(135deg, rgba(0, 143, 251, 0.1) 0%, rgba(0,0,0,0) 100%); border-left: 4px solid #008FFB;">
                                 <span class="text-muted text-uppercase font-weight-bold" style="font-size: 10px;">TOTAL MARGIN</span>
                                 <h3 class="mb-0 font-weight-bold text-white mt-1">${formatRingkas(sum.total_margin).replace("Rp ", "")}</h3>
@@ -145,7 +145,27 @@ document.addEventListener("DOMContentLoaded", function () {
                             </div>
                         </div>
 
-                        <div class="col-md-4 px-1 mb-2">
+                        <div class="col-lg col-md-4 col-sm-6 px-1 mb-2">
+                            <div class="p-3 rounded h-100" style="background: linear-gradient(135deg, rgba(0, 227, 150, 0.1) 0%, rgba(0,0,0,0) 100%); border-left: 4px solid #00E396;">
+                                <span class="text-muted text-uppercase font-weight-bold" style="font-size: 10px;">MARGIN TIPE KIRIM</span>
+                                <h3 class="mb-0 font-weight-bold text-white mt-1">${formatRingkas(sum.total_margin_kirim).replace("Rp ", "")}</h3>
+                                <div class="mt-2 pt-2 border-top border-secondary text-white" style="font-size: 12px; border-color: rgba(255,255,255,0.1)!important;">
+                                    Detail: <b>${formatDetail(sum.total_margin_kirim)}</b>
+                                </div>
+                            </div>
+                        </div>
+
+                        <div class="col-lg col-md-4 col-sm-6 px-1 mb-2">
+                            <div class="p-3 rounded h-100" style="background: linear-gradient(135deg, rgba(254, 176, 25, 0.1) 0%, rgba(0,0,0,0) 100%); border-left: 4px solid #FEB019;">
+                                <span class="text-muted text-uppercase font-weight-bold" style="font-size: 10px;">MARGIN TIPE ADT</span>
+                                <h3 class="mb-0 font-weight-bold text-white mt-1">${formatRingkas(sum.total_margin_at).replace("Rp ", "")}</h3>
+                                <div class="mt-2 pt-2 border-top border-secondary text-white" style="font-size: 12px; border-color: rgba(255,255,255,0.1)!important;">
+                                    Detail: <b>${formatDetail(sum.total_margin_at)}</b>
+                                </div>
+                            </div>
+                        </div>
+
+                        <div class="col-lg col-md-4 col-sm-6 px-1 mb-2">
                             <div class="p-3 rounded h-100" style="background: #1c1e22; border: 1px solid #444;">
                                 <span class="text-muted text-uppercase font-weight-bold" style="font-size: 10px;">RATIO (ONGKIR / MARGIN)</span>
                                 <div class="d-flex align-items-center mt-1">
