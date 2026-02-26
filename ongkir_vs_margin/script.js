@@ -826,4 +826,256 @@ document.addEventListener("DOMContentLoaded", function () {
         link.click();
         document.body.removeChild(link);
     }
+   // ===================================================================
+    // LOGIKA SIMULASI ONGKIR BY JARAK & PENCARIAN MEMBER (MODAL)
+    // ===================================================================
+
+    let currentSimData = null; 
+
+    // --- A. FUNGSI MODAL PENCARIAN MEMBER & PAGINATION ---
+    window.triggerSearchModal = function() {
+        searchMemberApi(1);
+    }
+
+    window.openModalMember = function() {
+        $('#modalCariMember').modal('show');
+        searchMemberApi(1); // Auto-load halaman 1
+        setTimeout(() => {
+            document.getElementById('input-search-member-modal').focus();
+        }, 500);
+    }
+
+    document.getElementById('input-search-member-modal').addEventListener('keypress', function(e) {
+        if (e.key === 'Enter') triggerSearchModal();
+    });
+    document.getElementById('input-search-jarak-modal').addEventListener('keypress', function(e) {
+        if (e.key === 'Enter') triggerSearchModal();
+    });
+
+    window.searchMemberApi = function(page = 1) {
+        let keywordElem = document.getElementById('input-search-member-modal');
+        let keyword = keywordElem ? keywordElem.value.trim() : '';
+        let jarakElem = document.getElementById('input-search-jarak-modal');
+        let jarak = jarakElem ? jarakElem.value.trim() : '';
+
+        let tbody = document.getElementById('tbody-list-member');
+        let paginationContainer = document.getElementById('pagination-modal-member');
+
+        if (keyword.length > 0 && keyword.length < 3) {
+            tbody.innerHTML = `<tr><td colspan="10" class="text-center text-warning py-4">Ketik minimal 3 karakter untuk mencari spesifik, atau kosongkan lalu klik Cari.</td></tr>`;
+            paginationContainer.innerHTML = '';
+            return;
+        }
+
+        let startDate = document.getElementById("start_date").value;
+        let endDate = document.getElementById("end_date").value;
+
+        tbody.innerHTML = `<tr><td colspan="10" class="text-center text-info py-4"><i class="fas fa-spinner fa-spin mr-2"></i> Memuat data transaksi member...</td></tr>`;
+
+        let url = `ongkir_vs_margin/api_get_member_simulasi.php?start_date=${startDate}&end_date=${endDate}&keyword=${encodeURIComponent(keyword)}&jarak=${encodeURIComponent(jarak)}&page=${page}`;
+
+        fetch(url)
+            .then(res => res.json())
+            .then(res => {
+                if(res.status === 'success' && res.data.length > 0) {
+                    let html = '';
+                    res.data.forEach(m => {
+                        html += `
+                            <tr>
+                                <td class="align-middle text-info font-weight-bold">${m.dtl_cusno}</td>
+                                <td class="align-middle text-left text-white font-weight-bold">${m.dtl_namamember}</td>
+                                <td class="align-middle">${m.mr || '-'}</td>
+                                <td class="align-middle text-info font-weight-bold">${m.jarak || 0}</td>
+                                <td class="align-middle">${m.struk || 0}</td>
+                                <td class="align-middle text-right">${formatDetail(m.dtl_gross).replace('Rp ', '')}</td>
+                                <td class="align-middle text-right">${formatDetail(m.avg_gross_per_struk).replace('Rp ', '')}</td>
+                                <td class="align-middle">${parseFloat(m.dtl_margin_persen || 0).toFixed(2)}</td>
+                                <td class="align-middle text-right text-warning">${formatDetail(m.total_ongkir).replace('Rp ', '')}</td>
+                                <td class="align-middle text-center">
+                                    <button class="btn btn-sm btn-success py-0 px-3" onclick="pilihMember('${m.dtl_cusno}')">
+                                        Pilih
+                                    </button>
+                                </td>
+                            </tr>
+                        `;
+                    });
+                    tbody.innerHTML = html;
+                    renderModalPagination(res.pagination);
+                } else {
+                    tbody.innerHTML = `<tr><td colspan="10" class="text-center text-danger py-4"><i class="fas fa-times-circle"></i> Data member tidak ditemukan pada periode ini.</td></tr>`;
+                    paginationContainer.innerHTML = '';
+                }
+            })
+            .catch(err => {
+                console.error(err);
+                tbody.innerHTML = `<tr><td colspan="10" class="text-center text-danger py-4">Gagal terhubung ke server pencarian.</td></tr>`;
+                paginationContainer.innerHTML = '';
+            });
+    }
+
+    function renderModalPagination(pag) {
+        const container = document.getElementById('pagination-modal-member');
+        if (!container) return;
+        container.innerHTML = '';
+
+        if (pag.total_pages <= 1) return;
+
+        let cur = parseInt(pag.current_page);
+        let tot = parseInt(pag.total_pages);
+
+        let prevDis = cur === 1 ? 'disabled' : '';
+        let html = `<li class="page-item ${prevDis}"><a class="page-link bg-dark text-white border-secondary" href="javascript:void(0)" onclick="searchMemberApi(${cur - 1})">&laquo;</a></li>`;
+
+        let start = Math.max(1, cur - 2);
+        let end = Math.min(tot, cur + 2);
+
+        for (let i = start; i <= end; i++) {
+            let act = i === cur ? 'active bg-info border-info' : '';
+            html += `<li class="page-item ${act}"><a class="page-link ${i === cur ? 'bg-info text-white' : 'bg-dark text-white'} border-secondary" href="javascript:void(0)" onclick="searchMemberApi(${i})">${i}</a></li>`;
+        }
+
+        let nextDis = cur === tot ? 'disabled' : '';
+        html += `<li class="page-item ${nextDis}"><a class="page-link bg-dark text-white border-secondary" href="javascript:void(0)" onclick="searchMemberApi(${cur + 1})">&raquo;</a></li>`;
+
+        container.innerHTML = html;
+    }
+
+    window.pilihMember = function(kode) {
+        document.getElementById('sim_kode_member').value = kode;
+        $('#modalCariMember').modal('hide');
+        fetchDataSimulasi();
+    }
+
+
+    // --- B. FUNGSI TARIK DATA & RENDER TABEL UTAMA SIMULASI ---
+    document.getElementById("form-simulasi").addEventListener("submit", function (e) {
+        e.preventDefault();
+        fetchDataSimulasi();
+    });
+
+    // REACTIVITY: Pantau semua perubahan input (Termasuk input mode & margin rupiah)
+    document.querySelectorAll("#sim_tarif, #sim_sales, #sim_margin, #sim_mode, #sim_margin_rp").forEach(input => {
+        input.addEventListener("input", function() {
+            if (currentSimData) { renderTableSimulasi(currentSimData); }
+        });
+        input.addEventListener("change", function() {
+            if (currentSimData) { renderTableSimulasi(currentSimData); }
+        });
+    });
+
+    // Switcher Tampilan Input berdasarkan Mode
+    window.toggleSimMode = function() {
+        const mode = document.getElementById('sim_mode').value;
+        if (mode === 'cari_margin') {
+            document.getElementById('wrap_sim_sales').style.display = 'block';
+            document.getElementById('wrap_sim_margin_rp').style.display = 'none';
+        } else {
+            document.getElementById('wrap_sim_sales').style.display = 'none';
+            document.getElementById('wrap_sim_margin_rp').style.display = 'block';
+        }
+        if (currentSimData) renderTableSimulasi(currentSimData);
+    }
+
+    // Tombol BEP (Tutup Ongkir)
+    window.setSimulasiBEP = function() {
+        if (!currentSimData) {
+            alert("Silakan tarik data member terlebih dahulu!");
+            return;
+        }
+        const tarif = parseFloat(document.getElementById("sim_tarif").value) || 0;
+        const jarak = parseFloat(currentSimData.jarak) || 0;
+        const ongkirPerJarak = jarak * tarif;
+
+        // Set Target Margin persis sama dengan Nominal Ongkir
+        document.getElementById("sim_margin_rp").value = ongkirPerJarak;
+        renderTableSimulasi(currentSimData);
+    }
+
+    // Fungsi Fetch API (Tetap Sama)
+    function fetchDataSimulasi() {
+        const startDate = document.getElementById("start_date").value;
+        const endDate = document.getElementById("end_date").value;
+        const kodeMember = document.getElementById("sim_kode_member").value.trim().toUpperCase();
+
+        if (!kodeMember) {
+            alert("Silakan pilih Kode Member terlebih dahulu!");
+            return;
+        }
+
+        const tbody = document.getElementById("tbody-simulasi");
+        tbody.innerHTML = `<tr><td colspan="15" class="text-center py-5 text-warning"><i class="fas fa-spinner fa-spin mr-2"></i> Menarik rekam jejak transaksi...</td></tr>`;
+
+        fetch(`ongkir_vs_margin/api_simulasi_evaluasi_ongkir_jarak.php?start_date=${startDate}&end_date=${endDate}&kode_member=${kodeMember}`)
+            .then(res => res.json())
+            .then(res => {
+                if (res.status === 'success' && res.data) {
+                    currentSimData = res.data; 
+                    renderTableSimulasi(currentSimData); 
+                } else {
+                    currentSimData = null;
+                    tbody.innerHTML = `<tr><td colspan="15" class="text-center text-danger py-5"><i class="fas fa-times-circle text-danger mb-2" style="font-size: 2rem;"></i><br>Data transaksi tidak ditemukan untuk member <b>${kodeMember}</b><br>pada periode ${startDate} s/d ${endDate}.</td></tr>`;
+                }
+            })
+            .catch(err => {
+                currentSimData = null;
+                tbody.innerHTML = `<tr><td colspan="15" class="text-center text-danger py-4">Gagal terhubung ke server.</td></tr>`;
+            });
+    }
+
+    // Fungsi Kalkulasi Dua Arah
+    function renderTableSimulasi(data) {
+        const mode = document.getElementById("sim_mode").value;
+        const tarif = parseFloat(document.getElementById("sim_tarif").value) || 0;
+        const marginPct = parseFloat(document.getElementById("sim_margin").value) || 0;
+        const jarak = parseFloat(data.jarak) || 0;
+        
+        const ongkirPerJarak = jarak * tarif;
+
+        let sales = 0;
+        let marginRupiah = 0;
+
+        // MATEMATIKA DUA ARAH
+        if (mode === 'cari_margin') {
+            // Mode 1: User input Sales -> Sistem hitung Margin Rp
+            sales = parseFloat(document.getElementById("sim_sales").value) || 0;
+            marginRupiah = sales * (marginPct / 100);
+        } else {
+            // Mode 2: User input Margin Rp -> Sistem hitung kebutuhan Sales
+            marginRupiah = parseFloat(document.getElementById("sim_margin_rp").value) || 0;
+            // Rumus: Sales = Margin / (Persen / 100)
+            sales = marginPct > 0 ? (marginRupiah / (marginPct / 100)) : 0;
+        }
+
+        const ongkirVsMargin = marginRupiah - ongkirPerJarak;
+        const colorOngkirVs = ongkirVsMargin < 0 ? 'text-danger font-weight-bold' : 'text-success font-weight-bold';
+
+        // Styling untuk highlight kolom mana yang hasil hitungan
+        const colorSales = mode === 'cari_sales' ? 'color: #ffeb3b;' : 'color: #008FFB;';
+        const colorMarginRp = mode === 'cari_margin' ? 'color: #00e396;' : 'color: #fff;';
+
+        const tbody = document.getElementById("tbody-simulasi");
+        const tr = `
+            <tr>
+                <td class="align-middle text-info font-weight-bold">${data.dtl_cusno}</td>
+                <td class="align-middle text-left font-weight-bold text-white">${data.dtl_namamember}</td>
+                <td class="align-middle">${data.mr || '-'}</td>
+                <td class="align-middle text-info font-weight-bold">${data.jarak}</td>
+                <td class="align-middle">${data.struk}</td>
+                <td class="align-middle text-right">${formatDetail(data.dtl_gross).replace('Rp ', '')}</td>
+                <td class="align-middle text-right">${formatDetail(data.avg_gross_per_struk).replace('Rp ', '')}</td>
+                <td class="align-middle">${parseFloat(data.dtl_margin_persen).toFixed(2)}</td>
+                <td class="align-middle text-right text-warning">${formatDetail(data.total_ongkir).replace('Rp ', '')}</td>
+
+                <td class="align-middle font-weight-bold" style="background-color: #1c1e22;">${formatDetail(tarif).replace('Rp ', '')}</td>
+                <td class="align-middle text-right font-weight-bold" style="background-color: #1c1e22; color: #ff9800;">${formatDetail(ongkirPerJarak).replace('Rp ', '')}</td>
+                
+                <td class="align-middle text-right font-weight-bold" style="background-color: #242a30; ${colorSales}">${formatDetail(sales).replace('Rp ', '')}</td>
+                <td class="align-middle font-weight-bold" style="background-color: #242a30;">${marginPct}</td>
+                <td class="align-middle text-right font-weight-bold" style="background-color: #1c1e22; ${colorMarginRp}">${formatDetail(marginRupiah).replace('Rp ', '')}</td>
+                
+                <td class="align-middle text-right ${colorOngkirVs}" style="background-color: #1c1e22; font-size: 1.1rem;">${formatDetail(ongkirVsMargin).replace('Rp ', '')}</td>
+            </tr>
+        `;
+        tbody.innerHTML = tr;
+    }
 });

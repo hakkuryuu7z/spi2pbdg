@@ -111,3 +111,61 @@
         </div>
     </div>
 </div>
+<div class="modal fade" id="modalCariMember" tabindex="-1" role="dialog" aria-hidden="true">
+    <div class="modal-dialog modal-xl" role="document">
+        <div class="modal-content" style="background-color: #2b2f33; color: white;">
+            <div class="modal-header border-secondary">
+                <h5 class="modal-title font-weight-bold"><i class="fas fa-users text-info mr-2"></i> Cari & Pilih Member (Cabang 2P)</h5>
+                <button type="button" class="close text-white" data-dismiss="modal" aria-label="Close">
+                    <span aria-hidden="true">&times;</span>
+                </button>
+            </div>
+            <div class="modal-body">
+
+                <div class="row mb-3">
+                    <div class="col-md-8 mb-2">
+                        <input type="text" id="input-search-member-modal" class="form-control bg-dark text-white border-secondary" placeholder="Ketik Kode atau Nama Member (Boleh Kosong)..." autocomplete="off">
+                    </div>
+                    <div class="col-md-4 mb-2">
+                        <div class="input-group">
+                            <input type="number" id="input-search-jarak-modal" class="form-control bg-dark text-white border-secondary" placeholder="Jarak (KM)" autocomplete="off">
+                            <div class="input-group-append">
+                                <button class="btn btn-info" type="button" onclick="triggerSearchModal()"><i class="fas fa-search"></i> Cari</button>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+
+                <div class="table-responsive" style="max-height: 450px; overflow-y: auto;">
+                    <table class="table table-dark table-hover table-bordered mb-0" style="font-size: 12px; white-space: nowrap; text-align: center;">
+                        <thead style="background-color: #1c1e22; position: sticky; top: 0; z-index: 1;">
+                            <tr>
+                                <th>dtl_cusno</th>
+                                <th class="text-left">dtl_namamember</th>
+                                <th>mr</th>
+                                <th>jarak</th>
+                                <th>struk</th>
+                                <th class="text-right">dtl_gross</th>
+                                <th class="text-right">avg_gross_per_struk</th>
+                                <th>dtl_margin_persen</th>
+                                <th class="text-right">total_ongkir</th>
+                                <th class="text-warning"><i class="fas fa-hand-pointer"></i> Aksi</th>
+                            </tr>
+                        </thead>
+                        <tbody id="tbody-list-member">
+                            <tr>
+                                <td colspan="10" class="text-center text-muted py-4">Memuat data member...</td>
+                            </tr>
+                        </tbody>
+                    </table>
+                </div>
+
+                <div class="mt-3 d-flex justify-content-end">
+                    <ul class="pagination pagination-sm mb-0" id="pagination-modal-member">
+                    </ul>
+                </div>
+
+            </div>
+        </div>
+    </div>
+</div>
