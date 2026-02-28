@@ -616,6 +616,18 @@ $(document).ready(function() {
             $('#sales').text(response.sales || 'Rp 0');
         }).fail(() => $('#sales').text('Error'));
 
+        $.getJSON('detailsales/api_get_sales_perpb.php', {
+            tanggal_mulai: tglMulai,
+            tanggal_selesai: tglSelesai
+        }, function(response) {
+            if (response.status === 'success') {
+                // Gunakan fungsi formatRupiah yang sudah ada di script.js
+                $('#sales_perpb').text(formatRupiah(response.sales_perpb));
+            } else {
+                $('#sales_perpb').text('Rp 0');
+            }
+        }).fail(() => $('#sales_perpb').text('Error'));
+        
         $.getJSON('detailsales/api_get_stats.php', {
             tanggal_mulai: tglMulai,
             tanggal_selesai: tglSelesai

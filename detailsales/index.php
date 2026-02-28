@@ -6,7 +6,7 @@
                     <i class="fas fa-wallet fa-lg"></i>
                 </div>
                 <div>
-                    <div class="text-muted">Sales</div>
+                    <div class="text-muted">Sales kasir</div>
                     <div class="h4 font-weight-bold" id="sales">Memuat...</div>
                 </div>
             </div>
@@ -167,6 +167,19 @@
         </div>
     </div>
 
+    <div class="col-6 col-md-3 mb-3">
+        <div class="card stat-card h-100">
+            <div class="card-body d-flex align-items-center">
+                <div class="icon-circle bg-primary mr-3">
+                    <i class="fas fa-chart-line fa-lg"></i>
+                </div>
+                <div>
+                    <div class="text-muted">Sales per PB</div>
+                    <div class="h4 font-weight-bold" id="sales_perpb">Memuat...</div>
+                </div>
+            </div>
+        </div>
+    </div>
     <div class="col-12 mt-2">
         <div class="card" id="filterCard">
             <div class="card-header">
