@@ -396,13 +396,15 @@ $(document).ready(function() {
     let sleeperCurrentPage = 1;
 
     window.loadSleeper = async function(interval) {
-        $('.btn-toggle-modern').removeClass('active');
-        $(`#btnSleeper${interval}`).addClass('active');
+        // Sinkronisasi nilai input agar sesuai dengan parameter
+        $('#inputSleeperInterval').val(interval);
         
         const date = new Date();
         date.setMonth(date.getMonth() - interval);
         const monthStr = date.toLocaleString('id-ID', { month: 'long', year: 'numeric' });
-        $('#sleeperSubtitle').html(`Tidak transaksi sejak <strong>${monthStr}</strong>`);
+        
+        // Update subtitle agar lebih informatif
+        $('#sleeperSubtitle').html(`Tidak transaksi sejak <strong>${monthStr}</strong> <span class="text-warning">(${interval} Bulan)</span>`);
 
         const tbody = $('#tabel-sleeper tbody');
         tbody.html('<tr><td colspan="8" class="text-center py-5 text-muted"><div class="spinner-border spinner-border-sm text-warning mb-2"></div><br>Menganalisis data...</td></tr>');
@@ -426,6 +428,26 @@ $(document).ready(function() {
             tbody.html('<tr><td colspan="8" class="text-center text-danger py-4">Gagal memuat data sleeper.</td></tr>');
         }
     };
+
+    // --- EVENT LISTENER UNTUK INPUT DINAMIS ---
+    
+    // Jika tombol pencarian (kaca pembesar) diklik
+    $('#btnApplySleeper').on('click', function() {
+        let val = parseInt($('#inputSleeperInterval').val());
+        // Validasi agar minimal selalu 1 bulan
+        if (isNaN(val) || val < 1) {
+            val = 1;
+            $('#inputSleeperInterval').val(1);
+        }
+        loadSleeper(val);
+    });
+
+    // Jika user menekan tombol "Enter" di dalam kotak angka
+    $('#inputSleeperInterval').on('keypress', function(e) {
+        if (e.which === 13) { 
+            $('#btnApplySleeper').click();
+        }
+    });
 
     function renderSleeperTable() {
         const searchVal = $('#searchSleeper').val().toLowerCase();

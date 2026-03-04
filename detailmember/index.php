@@ -213,9 +213,19 @@
                         <div class="text-muted small font-weight-normal mt-1" id="sleeperSubtitle">Memuat data...</div>
                     </div>
                 </div>
-                <div class="toggle-container">
-                    <button type="button" class="btn-toggle-modern" onclick="loadSleeper(2)" id="btnSleeper2">-2 Bulan</button>
-                    <button type="button" class="btn-toggle-modern" onclick="loadSleeper(3)" id="btnSleeper3">-3 Bulan</button>
+                <div class="toggle-container d-flex align-items-center">
+                    <button type="button" class="btn-toggle-modern btn-excel mr-3" onclick="exportSleeperToExcel()">
+                        <i class="fas fa-file-excel mr-1"></i> Export
+                    </button>
+
+                    <div class="d-flex align-items-center bg-dark rounded border border-secondary" style="padding: 2px 4px;">
+                        <span class="text-muted small px-2">Tidak Transaksi:</span>
+                        <input type="number" id="inputSleeperInterval" value="2" min="1" class="form-control form-control-sm text-center text-white bg-transparent border-0 font-weight-bold" style="width: 50px; outline: none; box-shadow: none;">
+                        <span class="text-muted small px-2">Bulan</span>
+                        <button type="button" class="btn btn-sm btn-primary rounded ml-1" id="btnApplySleeper">
+                            <i class="fas fa-search"></i>
+                        </button>
+                    </div>
                 </div>
                 <div class="toggle-container">
                     <button type="button" class="btn-toggle-modern btn-excel mr-2" onclick="exportSleeperToExcel()">
