@@ -392,7 +392,14 @@
                     <h5 class="card-title mb-0 text-white font-weight-bold" style="font-size: 14px;">
                         <i class="fas fa-chart-line mr-2 text-pink"></i>Sales Produk Per Kecamatan
                     </h5>
-
+                    <div class="btn-group btn-group-sm">
+                        <button id="btn-sort-kec-desc" class="btn btn-outline-info active" title="Sales Terbesar">
+                            <i class="fas fa-sort-amount-down"></i> Terbesar
+                        </button>
+                        <button id="btn-sort-kec-asc" class="btn btn-outline-info" title="Sales Terkecil">
+                            <i class="fas fa-sort-amount-up"></i> Terkecil
+                        </button>
+                    </div>
                     <div class="filter-capsule">
                         <i class="far fa-calendar-alt text-muted mr-2" style="font-size: 12px;"></i>
 

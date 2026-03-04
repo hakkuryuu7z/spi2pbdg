@@ -207,6 +207,17 @@ foreach ($data_by_kecamatan as $kec_name => $kec_data) {
     ];
 }
 
+// --- TAMBAHAN LOGIKA SORTING KECAMATAN ---
+$sort_order = isset($_GET['sort']) ? $_GET['sort'] : 'desc'; // default terbesar
+
+usort($final_data, function ($a, $b) use ($sort_order) {
+    if ($sort_order === 'asc') {
+        return $a['summary']['sales'] <=> $b['summary']['sales'];
+    } else {
+        return $b['summary']['sales'] <=> $a['summary']['sales'];
+    }
+});
+
 // 8. OUTPUT JSON
 echo json_encode([
     'status' => 'success',

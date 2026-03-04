@@ -64,7 +64,9 @@ $(document).ready(function() {
 
     // --- GLOBAL VARIABLE BARU ---
     let ongkirMarginChart;
-
+    
+    // --- TAMBAHAN: Variabel Global untuk menyimpan status sort ---
+    let currentKecSort = 'desc';
     // Set Default Date untuk Filter Ongkir (Awal Bulan - Hari Ini)
     if($('#filter-ongkir-start').length) { $('#filter-ongkir-start').val(firstDayString); $('#filter-ongkir-end').val(todayString); }
 
@@ -257,6 +259,19 @@ $(document).ready(function() {
         tooltip: { theme: 'dark', y: { formatter: val => val + " Dokumen" } }
     };
 
+    $('#btn-sort-kec-desc').click(function() {
+    currentKecSort = 'desc';
+    $(this).addClass('active');
+    $('#btn-sort-kec-asc').removeClass('active');
+    loadKecamatanData(); // Panggil ulang API
+});
+
+$('#btn-sort-kec-asc').click(function() {
+    currentKecSort = 'asc';
+    $(this).addClass('active');
+    $('#btn-sort-kec-desc').removeClass('active');
+    loadKecamatanData(); // Panggil ulang API
+});
     // --- E. CHART SALES PER MR ---
     const salesMrOptions = {
         series: [],
@@ -1823,44 +1838,49 @@ function updateSalesMrChartData() {
 
     // Fungsi Fetch Data API
     function loadKecamatanData() {
-        let s = $('#filter-kec-start').val();
-        let e = $('#filter-kec-end').val();
-        
-        $('#nav-kecamatan-container').html('<div class="d-flex align-items-center text-muted"><span class="spinner-border spinner-border-sm text-pink mr-2"></span>Sedang memuat data...</div>');
-        $('#chart-kecamatan').css('opacity', 0.5);
+    let s = $('#filter-kec-start').val();
+    let e = $('#filter-kec-end').val();
+    
+    $('#nav-kecamatan-container').html('<div class="d-flex align-items-center text-muted"><span class="spinner-border spinner-border-sm text-pink mr-2"></span>Sedang memuat data...</div>');
+    $('#chart-kecamatan').css('opacity', 0.5);
 
-        $.ajax({
-            url: 'dashboard/api_get_sales_produk_perkecamatan.php',
-            type: 'GET',
-            data: { start_date: s, end_date: e },
-            dataType: 'json',
-            success: function(res) {
-                $('#chart-kecamatan').css('opacity', 1);
+    $.ajax({
+        url: 'dashboard/api_get_sales_produk_perkecamatan.php',
+        type: 'GET',
+        // Update di bagian data: tambahkan sort
+        data: { 
+            start_date: s, 
+            end_date: e, 
+            sort: currentKecSort 
+        },
+        dataType: 'json',
+        success: function(res) {
+            $('#chart-kecamatan').css('opacity', 1);
+            
+            if(res.status === 'success') {
+                $('#pk-global-sales').text(formatRingkas(res.global.sales));
+                $('#pk-global-margin').text(formatRingkas(res.global.margin));
                 
-                if(res.status === 'success') {
-                    $('#pk-global-sales').text(formatRingkas(res.global.sales));
-                    $('#pk-global-margin').text(formatRingkas(res.global.margin));
-                    
-                    rawKecamatanData = res.data;
-                    renderKecamatanNav();
+                rawKecamatanData = res.data;
+                renderKecamatanNav();
 
-                    if(rawKecamatanData.length > 0) {
-                        renderKecamatanDetail(0); 
-                    } else {
-                        $('#nav-kecamatan-container').html('<span class="text-muted font-italic ml-2">Tidak ada data.</span>');
-                        resetKecamatanDetail();
-                    }
+                if(rawKecamatanData.length > 0) {
+                    renderKecamatanDetail(0); 
                 } else {
-                    $('#nav-kecamatan-container').html(`<span class="text-danger ml-2">${res.message}</span>`);
+                    $('#nav-kecamatan-container').html('<span class="text-muted font-italic ml-2">Tidak ada data.</span>');
+                    resetKecamatanDetail();
                 }
-            },
-            error: function(xhr, status, error) {
-                console.error("AJAX Error:", error);
-                $('#nav-kecamatan-container').html('<span class="text-danger ml-2">Gagal memuat data.</span>');
-                $('#chart-kecamatan').css('opacity', 1);
+            } else {
+                $('#nav-kecamatan-container').html(`<span class="text-danger ml-2">${res.message}</span>`);
             }
-        });
-    }
+        },
+        error: function(xhr, status, error) {
+            console.error("AJAX Error:", error);
+            $('#nav-kecamatan-container').html('<span class="text-danger ml-2">Gagal memuat data.</span>');
+            $('#chart-kecamatan').css('opacity', 1);
+        }
+    });
+}
 
    // 1. Fungsi Render Tombol Navigasi (Updated Event Click)
     function renderKecamatanNav() {
