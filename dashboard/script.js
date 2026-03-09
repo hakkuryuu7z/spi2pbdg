@@ -1728,6 +1728,13 @@ function updateSalesMrChartData() {
                 // Sembunyikan tooltip saat mouse keluar dari area chart
                 mouseLeave: function() {
                     $('#floating-tooltip').hide();
+                },
+                dataPointSelection: function(event, chartContext, config) {
+                    let productDetail = rawKecamatanData[activeKecIndex].chart_data[config.dataPointIndex];
+                    if(productDetail) {
+                        let kecName = rawKecamatanData[activeKecIndex].kecamatan;
+                        showMemberProduk(kecName, productDetail.name);
+                    }
                 }
             }
         },
@@ -1954,7 +1961,7 @@ function updateSalesMrChartData() {
                 let rankClass = idx === 0 ? 'rank-1' : (idx === 1 ? 'rank-2' : (idx === 2 ? 'rank-3' : 'rank-other'));
                 let valQty = parseFloat(p.qty).toLocaleString('id-ID');
                 listQty.append(`
-                    <div class="list-item-product">
+                    <div class="list-item-product" style="cursor: pointer; transition: 0.2s;" onclick="showMemberProduk('${d.kecamatan}', '${p.name}')" onmouseover="this.style.background='rgba(255,255,255,0.1)'" onmouseout="this.style.background='transparent'">
                         <div class="rank-badge ${rankClass}">${idx + 1}</div>
                         <div class="product-name" title="${p.name}">${p.name}</div>
                         <div class="product-value text-success">${valQty}</div>
@@ -1971,8 +1978,8 @@ function updateSalesMrChartData() {
             d.top_products_sales.forEach((p, idx) => {
                 let rankClass = idx === 0 ? 'rank-1' : (idx === 1 ? 'rank-2' : (idx === 2 ? 'rank-3' : 'rank-other'));
                 let valSales = formatRingkas(p.sales).replace("Rp ", "");
-                listSales.append(`
-                    <div class="list-item-product">
+               listSales.append(`
+                    <div class="list-item-product" style="cursor: pointer; transition: 0.2s;" onclick="showMemberProduk('${d.kecamatan}', '${p.name}')" onmouseover="this.style.background='rgba(255,255,255,0.1)'" onmouseout="this.style.background='transparent'">
                         <div class="rank-badge ${rankClass}">${idx + 1}</div>
                         <div class="product-name" title="${p.name}">${p.name}</div>
                         <div class="product-value text-info">${valSales}</div>
@@ -2007,6 +2014,137 @@ function updateSalesMrChartData() {
         kecChart.updateOptions({xaxis: { categories: [] }});
     }
 
+    // ===================================================================
+    // FUNGSI MODAL DETAIL MEMBER BERDASARKAN PRODUK & KECAMATAN
+    // ===================================================================
+    window.showMemberProduk = function(kecamatan, namaBarang) {
+        let s = $('#filter-kec-start').val();
+        let e = $('#filter-kec-end').val();
+
+        // Set Text di Modal
+        $('#detail-mp-produk').text(namaBarang);
+        $('#detail-mp-kecamatan').text(kecamatan);
+        $('#detail-mp-total-member').text('Loading...');
+        
+        let tbody = $('#table-member-produk tbody');
+        tbody.html('<tr><td colspan="7" class="text-center py-4"><div class="spinner-border text-pink mb-2"></div><br><small>Menarik data member...</small></td></tr>');
+        
+        $('#modalMemberProduk').modal('show');
+
+        // Panggil API
+        let url = `dashboard/api_get_member_beli_produk.php?start_date=${s}&end_date=${e}&kecamatan=${encodeURIComponent(kecamatan)}&nama_barang=${encodeURIComponent(namaBarang)}`;
+
+        fetch(url)
+            .then(res => res.json())
+            .then(res => {
+                if(res.status === 'success') {
+                    $('#detail-mp-total-member').text(`Total: ${res.data.length} Member`);
+                    
+                    if(res.data.length === 0) {
+                        tbody.html('<tr><td colspan="7" class="text-center text-muted py-4">Tidak ada data member yang membeli produk ini.</td></tr>');
+                        return;
+                    }
+
+                    let html = '';
+                    res.data.forEach((item, i) => {
+                        let marginPct = parseFloat(item.dtl_margin_persen || 0);
+                        let pctColor = marginPct < 0 ? 'text-danger' : 'text-warning';
+
+                        html += `
+                            <tr>
+                                <td class="text-center text-muted">${i + 1}</td>
+                                <td><span class="badge badge-secondary">${item.dtl_cusno}</span></td>
+                                <td class="font-weight-bold text-truncate" style="max-width:200px;" title="${item.dtl_namamember}">${item.dtl_namamember || 'UMUM / NON MEMBER'}</td>
+                                <td class="text-center text-success font-weight-bold">${parseFloat(item.qty_in_pcs).toLocaleString('id-ID')}</td>
+                                <td class="text-right text-info font-weight-bold">Rp ${parseFloat(item.dtl_netto).toLocaleString('id-ID')}</td>
+                                <td class="text-right">
+                                    <div class="text-white">Rp ${parseFloat(item.dtl_margin).toLocaleString('id-ID')}</div>
+                                    <small class="${pctColor} font-weight-bold">${marginPct}%</small>
+                                </td>
+                                <td class="text-center">${item.kunjungan}x</td>
+                            </tr>
+                        `;
+                    });
+                    tbody.html(html);
+                } else {
+                    tbody.html(`<tr><td colspan="7" class="text-center text-danger py-4">Error: ${res.message}</td></tr>`);
+                }
+            })
+            .catch(err => {
+                console.error(err);
+                tbody.html('<tr><td colspan="7" class="text-center text-danger py-4">Gagal terhubung ke server.</td></tr>');
+            });
+    };
+
+    // ===================================================================
+    // FUNGSI MODAL DETAIL MEMBER BERDASARKAN KECAMATAN SAJA
+    // ===================================================================
+    
+    // Fungsi pemicu saat card diklik
+    window.triggerMemberKecamatan = function() {
+        let kecName = $('#pk-selected-name').text();
+        // Cegah klik jika data masih kosong atau belum pilih kecamatan
+        if(kecName === 'PILIH KEC' || kecName === 'DATA KOSONG') return; 
+        
+        showMemberKecamatan(kecName);
+    };
+
+    window.showMemberKecamatan = function(kecamatan) {
+        let s = $('#filter-kec-start').val();
+        let e = $('#filter-kec-end').val();
+
+        $('#detail-mk-kecamatan').text(': ' + kecamatan);
+        $('#detail-mk-total-member').text('Loading...');
+        
+        let tbody = $('#table-member-kecamatan tbody');
+        tbody.html('<tr><td colspan="7" class="text-center py-4"><div class="spinner-border text-info mb-2"></div><br><small>Menarik data member kecamatan...</small></td></tr>');
+        
+        $('#modalMemberKecamatan').modal('show');
+
+        // Panggil API khusus Kecamatan
+        let url = `dashboard/api_get_member_beli_kecamatan.php?start_date=${s}&end_date=${e}&kecamatan=${encodeURIComponent(kecamatan)}`;
+
+        fetch(url)
+            .then(res => res.json())
+            .then(res => {
+                if(res.status === 'success') {
+                    $('#detail-mk-total-member').text(`Total: ${res.data.length} Member`);
+                    
+                    if(res.data.length === 0) {
+                        tbody.html('<tr><td colspan="7" class="text-center text-muted py-4">Tidak ada data member di kecamatan ini.</td></tr>');
+                        return;
+                    }
+
+                    let html = '';
+                    res.data.forEach((item, i) => {
+                        let marginPct = parseFloat(item.dtl_margin_persen || 0);
+                        let pctColor = marginPct < 0 ? 'text-danger' : (marginPct > 15 ? 'text-success' : 'text-warning');
+
+                        html += `
+                            <tr>
+                                <td class="text-center text-muted">${i + 1}</td>
+                                <td><span class="badge badge-secondary">${item.dtl_cusno}</span></td>
+                                <td class="font-weight-bold text-truncate" style="max-width:200px;" title="${item.dtl_namamember}">${item.dtl_namamember || 'UMUM / NON MEMBER'}</td>
+                                <td class="text-center text-success font-weight-bold">${parseFloat(item.qty_in_pcs).toLocaleString('id-ID')}</td>
+                                <td class="text-right text-info font-weight-bold">Rp ${parseFloat(item.dtl_netto).toLocaleString('id-ID')}</td>
+                                <td class="text-right">
+                                    <div class="text-white">Rp ${parseFloat(item.dtl_margin).toLocaleString('id-ID')}</div>
+                                    <small class="${pctColor} font-weight-bold">${marginPct}%</small>
+                                </td>
+                                <td class="text-center">${item.kunjungan}x</td>
+                            </tr>
+                        `;
+                    });
+                    tbody.html(html);
+                } else {
+                    tbody.html(`<tr><td colspan="7" class="text-center text-danger py-4">Error: ${res.message}</td></tr>`);
+                }
+            })
+            .catch(err => {
+                console.error(err);
+                tbody.html('<tr><td colspan="7" class="text-center text-danger py-4">Gagal terhubung ke server.</td></tr>');
+            });
+    };
     function updateAreaChartData() { fetch("dashboard/api_get_grafik.php").then(r=>r.json()).then(d=>{ if(!d||!d.tanggal)return; apexAreaChart.updateOptions({series:[{name:'Sales',data:d.sales},{name:'Margin',data:d.margin}],xaxis:{categories:d.tanggal.map(x=>new Date(x).toLocaleDateString('id-ID',{day:'2-digit',month:'short'}))}}); }); }
     function updateDistanceChartData() { fetch("detailmember/api_get_jarak.php").then(r=>r.json()).then(r=>{ distanceDonutChart.updateOptions({labels:r.data.map(x=>x.kategori_jarak),series:r.data.map(x=>parseInt(x.jumlah_member))}); }); }
     function updateMonthlyChartData() { fetch("dashboard/api_get_grafik_perbulan.php").then(r=>r.json()).then(d=>{ monthlyChart.updateOptions({ series:[{name: 'Sales', data:d.sales}, {name: 'Margin', data:d.margin}], xaxis:{categories:d.bulan} }); }); }

@@ -262,3 +262,107 @@
         </div>
     </div>
 </div>
+
+
+
+<div class="modal fade" id="modalMemberProduk" tabindex="-1" role="dialog" aria-hidden="true">
+    <div class="modal-dialog modal-xl modal-dialog-centered" role="document">
+        <div class="modal-content" style="background: #1e2226; border: 1px solid #444;">
+            <div class="modal-header border-bottom border-secondary" style="background: rgba(0,0,0,0.2);">
+                <h5 class="modal-title text-white font-weight-bold">
+                    <i class="fas fa-users text-pink mr-2"></i>Detail Member Pembeli Produk
+                </h5>
+                <button type="button" class="close text-white" data-dismiss="modal" aria-label="Close">
+                    <span aria-hidden="true">&times;</span>
+                </button>
+            </div>
+            <div class="modal-body p-4">
+                <div class="row mb-3">
+                    <div class="col-md-8">
+                        <div class="d-flex align-items-center mb-1">
+                            <span class="text-muted mr-2" style="width: 80px;">Produk</span>
+                            <span class="text-white font-weight-bold" id="detail-mp-produk">: -</span>
+                        </div>
+                        <div class="d-flex align-items-center">
+                            <span class="text-muted mr-2" style="width: 80px;">Kecamatan</span>
+                            <span class="text-info font-weight-bold" id="detail-mp-kecamatan">: -</span>
+                        </div>
+                    </div>
+                    <div class="col-md-4 text-right">
+                        <span class="badge badge-success p-2" id="detail-mp-total-member" style="font-size: 14px;">Total: 0 Member</span>
+                    </div>
+                </div>
+
+                <div class="table-responsive" style="max-height: 400px; overflow-y: auto;">
+                    <table class="table table-dark table-striped table-hover mb-0" id="table-member-produk" style="font-size: 12px;">
+                        <thead style="position: sticky; top: 0; background: #23272b; z-index: 1;">
+                            <tr>
+                                <th class="text-center" width="5%">No</th>
+                                <th width="15%">Kode Member</th>
+                                <th width="30%">Nama Member</th>
+                                <th class="text-center" width="10%">Qty (Pcs)</th>
+                                <th class="text-right" width="15%">Sales (Netto)</th>
+                                <th class="text-right" width="15%">Margin</th>
+                                <th class="text-center" width="10%">Kunjungan</th>
+                            </tr>
+                        </thead>
+                        <tbody>
+                        </tbody>
+                    </table>
+                </div>
+            </div>
+            <div class="modal-footer border-top border-secondary">
+                <button type="button" class="btn btn-secondary" data-dismiss="modal">Tutup</button>
+            </div>
+        </div>
+    </div>
+</div>
+
+<div class="modal fade" id="modalMemberKecamatan" tabindex="-1" role="dialog" aria-hidden="true">
+    <div class="modal-dialog modal-xl modal-dialog-centered" role="document">
+        <div class="modal-content" style="background: #1e2226; border: 1px solid #444;">
+            <div class="modal-header border-bottom border-secondary" style="background: rgba(0,0,0,0.2);">
+                <h5 class="modal-title text-white font-weight-bold">
+                    <i class="fas fa-map-marked-alt text-info mr-2"></i>Detail Pembeli di Kecamatan
+                </h5>
+                <button type="button" class="close text-white" data-dismiss="modal" aria-label="Close">
+                    <span aria-hidden="true">&times;</span>
+                </button>
+            </div>
+            <div class="modal-body p-4">
+                <div class="row mb-3">
+                    <div class="col-md-8">
+                        <div class="d-flex align-items-center">
+                            <span class="text-muted mr-2" style="width: 80px;">Kecamatan</span>
+                            <span class="text-info font-weight-bold" id="detail-mk-kecamatan" style="font-size: 1.2rem;">: -</span>
+                        </div>
+                    </div>
+                    <div class="col-md-4 text-right">
+                        <span class="badge badge-info p-2" id="detail-mk-total-member" style="font-size: 14px;">Total: 0 Member</span>
+                    </div>
+                </div>
+
+                <div class="table-responsive" style="max-height: 400px; overflow-y: auto;">
+                    <table class="table table-dark table-striped table-hover mb-0" id="table-member-kecamatan" style="font-size: 12px;">
+                        <thead style="position: sticky; top: 0; background: #23272b; z-index: 1;">
+                            <tr>
+                                <th class="text-center" width="5%">No</th>
+                                <th width="15%">Kode Member</th>
+                                <th width="30%">Nama Member</th>
+                                <th class="text-center" width="10%">Total Qty</th>
+                                <th class="text-right" width="15%">Total Sales</th>
+                                <th class="text-right" width="15%">Total Margin</th>
+                                <th class="text-center" width="10%">Kunjungan</th>
+                            </tr>
+                        </thead>
+                        <tbody>
+                        </tbody>
+                    </table>
+                </div>
+            </div>
+            <div class="modal-footer border-top border-secondary">
+                <button type="button" class="btn btn-secondary" data-dismiss="modal">Tutup</button>
+            </div>
+        </div>
+    </div>
+</div>

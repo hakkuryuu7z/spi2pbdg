@@ -437,7 +437,7 @@
                                     </div>
                                 </div>
                                 <div class="col-6 mb-3">
-                                    <div class="card-modern h-100" style="border-left: 4px solid #008FFB;">
+                                    <div id="card-detail-kecamatan" class="card-modern h-100" style="border-left: 4px solid #008FFB; cursor: pointer; transition: transform 0.2s ease-in-out;" onmouseover="this.style.transform='scale(1.02)'" onmouseout="this.style.transform='scale(1)'" onclick="triggerMemberKecamatan()">
                                         <div class="card-header-gradient-blue text-white d-flex justify-content-between align-items-center">
                                             <h6 id="pk-selected-name" class="mb-0 font-weight-bold text-truncate" style="max-width: 65%;">PILIH KEC</h6>
                                             <span id="pk-trx-count" class="badge badge-light font-weight-bold" style="font-size:10px;">0 Trx</span>
