@@ -207,6 +207,7 @@ $(document).ready(function() {
         markers: { size: 4, strokeWidth: 2, hover: { size: 6 } },
         dataLabels: { enabled: false },
         xaxis: {
+            type: 'category',
             categories: [],
             labels: { offsetY: 0, style: { fontSize: '11px', colors: '#A0A0A0' }, rotate: -45, hideOverlappingLabels: true },
             tooltip: { enabled: false }, axisBorder: { show: false }, axisTicks: { show: false }
@@ -223,14 +224,29 @@ $(document).ready(function() {
         tooltip: {
             shared: true, intersect: false, theme: 'dark',
             x: {
-                formatter: function(val) {
-                    if (!val || val === 0) return "Periode Ini";
-                    let dateObj = new Date(val);
+                formatter: function(val, opts) {
+                    // Ambil label secara paksa dari array sumber (categories)
+                    let exactLabel = val;
+                    if (opts && opts.w && opts.w.config && opts.w.config.xaxis && opts.w.config.xaxis.categories) {
+                        let catArray = opts.w.config.xaxis.categories;
+                        if (opts.dataPointIndex !== undefined && catArray[opts.dataPointIndex]) {
+                            exactLabel = catArray[opts.dataPointIndex];
+                        }
+                    }
+
+                    // Jika label aslinya memuat kata "Hari" (misal: "Hari Ke-1"), langsung return
+                    if (typeof exactLabel === 'string' && exactLabel.toLowerCase().includes('hari')) {
+                        return exactLabel;
+                    }
+
+                    if (!exactLabel || exactLabel === 0) return "Periode Ini";
+                    
+                    let dateObj = new Date(exactLabel);
                     if (dateObj instanceof Date && !isNaN(dateObj)) {
-                        if (dateObj.getFullYear() < 2000) return val;
+                        if (dateObj.getFullYear() < 2000) return exactLabel;
                         return dateObj.toLocaleDateString('id-ID', { day: 'numeric', month: 'long', year: 'numeric' });
                     }
-                    return val;
+                    return exactLabel;
                 }
             },
             y: { formatter: function (y) { if(typeof y !== "undefined") return formatDetail(y); return y; } }
@@ -916,9 +932,15 @@ $('#btn-sort-kec-asc').click(function() {
                 };
             }
 
+            // Tangkap label asli dari API secara mutlak
+            let catLabels = d.map(x => x.tanggal);
+
             combinedTrendChart.updateOptions({
                 ...dynamicChartConfig,
-                xaxis: { categories: d.map(x=>x.tanggal) },
+                xaxis: { 
+                    type: 'category', // Kunci lagi sebagai kategori
+                    categories: catLabels 
+                },
                 yaxis: [
                     { show: true, min: 0, max: maxSales, forceNiceScale: true, title: { text: 'Sales', style: { color: '#2E93fA' } }, labels: { style: { colors: '#2E93fA' }, formatter: val => formatRingkas(val).replace("Rp ", "") } },
                     { show: false, min: 0, max: maxSales }, { show: false, min: 0, max: maxSales },
@@ -927,14 +949,28 @@ $('#btn-sort-kec-asc').click(function() {
                 ],
                 tooltip: {
                     x: {
-                        formatter: function(val) {
-                            if (!val || val === 0) return "Periode Ini";
-                            if (!isNaN(val) && val.toString().length <= 2) {
-                                return val + " " + currMonthName + " " + currYear;
-                            }
-                            let dObj = new Date(val);
-                            if (dObj instanceof Date && !isNaN(dObj)) {
-                                return dObj.toLocaleDateString('id-ID', { day: 'numeric', month: 'long', year: 'numeric' });
+                        formatter: function(val, opts) {
+                            // Langsung tembak ke array data mentah (catLabels) pakai urutan index-nya
+                            if (opts && opts.dataPointIndex !== undefined && catLabels[opts.dataPointIndex]) {
+                                let label = catLabels[opts.dataPointIndex];
+
+                                // Jika dari API teksnya udah "Hari Ke-...", langsung return aja
+                                if (typeof label === 'string' && label.toLowerCase().includes('hari')) {
+                                    return label;
+                                }
+
+                                // Jaga-jaga kalau API ngirim angka doang (misal cuma "1"), kita tambahin "Hari Ke-" manual
+                                if (p === 'daily' && !isNaN(label)) {
+                                    return "Hari Ke-" + label;
+                                }
+
+                                // Sisanya (misal bulanan), parse sebagai tanggal
+                                let dateObj = new Date(label);
+                                if (dateObj instanceof Date && !isNaN(dateObj) && label.toString().length > 2) {
+                                    return dateObj.toLocaleDateString('id-ID', { day: 'numeric', month: 'long', year: 'numeric' });
+                                }
+
+                                return label;
                             }
                             return val;
                         }

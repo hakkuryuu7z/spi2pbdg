@@ -8,17 +8,7 @@ ini_set('display_errors', 0);
 
 require_once '../connection/index.php';
 
-// 2. DETEKSI VARIABEL KONEKSI (Cari $conn atau $pdo)
-$db = null;
-if (isset($conn)) {
-    $db = $conn;
-} elseif (isset($pdo)) {
-    $db = $pdo;
-} else {
-    // Jika nama variabel di file connection/index.php bukan $conn atau $pdo
-    echo json_encode(['status' => 'error', 'message' => 'Variabel koneksi database tidak ditemukan. Cek nama variabel di connection/index.php']);
-    exit;
-}
+
 
 // 3. Ambil Parameter Tanggal
 $start_date = isset($_GET['start_date']) ? $_GET['start_date'] : date('Y-m-01');
@@ -88,6 +78,17 @@ $sql = "
 ";
 
 // 5. EKSEKUSI QUERY (Support PDO & Native PostgreSQL)
+$db = null;
+if (isset($conn)) {
+    $db = $conn;
+} elseif (isset($pdo)) {
+    $db = $pdo;
+} else {
+    // Jika nama variabel di file connection/index.php bukan $conn atau $pdo
+    echo json_encode(['status' => 'error', 'message' => 'Variabel koneksi database tidak ditemukan. Cek nama variabel di connection/index.php']);
+    exit;
+}
+
 $result_data = [];
 
 try {

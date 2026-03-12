@@ -326,4 +326,79 @@ document.addEventListener('DOMContentLoaded', function() {
         // Panggil saat halaman pertama kali dimuat
         // fetchTfFileData();
     }
+    // ===============================================================
+    // BAGIAN 5: KODE UNTUK EXPORT DATA (BARKOS & PRODUK SERVEI)
+    // ===============================================================
+    
+    /**
+     * Mengkonversi JSON array ke format XLSX dan men-trigger download
+     */
+    function downloadExcel(jsonData, filename) {
+        if (!jsonData || !jsonData.length) {
+            alert("Tidak ada data untuk di-export!");
+            return;
+        }
+        
+        // 1. Buat Worksheet dari JSON Data
+        const worksheet = XLSX.utils.json_to_sheet(jsonData);
+        
+        // 2. Buat Workbook baru
+        const workbook = XLSX.utils.book_new();
+        
+        // 3. Masukkan Worksheet ke dalam Workbook
+        XLSX.utils.book_append_sheet(workbook, worksheet, "Data Export");
+        
+        // 4. Trigger download file Excel (.xlsx)
+        XLSX.writeFile(workbook, filename);
+    }
+
+    // Export BARKOS
+    const btnExportBarkos = document.getElementById('btn_export_barkos');
+    if (btnExportBarkos) {
+        btnExportBarkos.addEventListener('click', async (e) => {
+            e.preventDefault();
+            setButtonLoading(btnExportBarkos, true);
+            try {
+                const response = await fetch('opredp/api_export_barkos.php');
+                const result = await response.json();
+                
+                if (result.status === 'success') {
+                    const tgl = new Date().toISOString().slice(0,10);
+                    // Panggil downloadExcel dengan ekstensi .xlsx
+                    downloadExcel(result.data, `Data_BARKOS_${tgl}.xlsx`);
+                } else {
+                    throw new Error(result.message);
+                }
+            } catch (error) {
+                alert(`Gagal export Barkos: ${error.message}`);
+            } finally {
+                setButtonLoading(btnExportBarkos, false);
+            }
+        });
+    }
+
+    // Export PRODUK SERVEI
+    const btnExportProduk = document.getElementById('btn_export_produk');
+    if (btnExportProduk) {
+        btnExportProduk.addEventListener('click', async (e) => {
+            e.preventDefault();
+            setButtonLoading(btnExportProduk, true);
+            try {
+                const response = await fetch('opredp/api_export_produk.php');
+                const result = await response.json();
+                
+                if (result.status === 'success') {
+                    const tgl = new Date().toISOString().slice(0,10);
+                    // Panggil downloadExcel dengan ekstensi .xlsx
+                    downloadExcel(result.data, `Data_PRODUK_SERVEI_${tgl}.xlsx`);
+                } else {
+                    throw new Error(result.message);
+                }
+            } catch (error) {
+                alert(`Gagal export Produk Servei: ${error.message}`);
+            } finally {
+                setButtonLoading(btnExportProduk, false);
+            }
+        });
+    }
 });

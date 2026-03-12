@@ -40,6 +40,7 @@ $allowed_ips = [
     '192.168.164.12',
     '192.168.152.2',
     '100.106.176.100',
+    '192.168.195.70',
     // '172.26.15.3',
     // '172.26.15.5',
     // '172.26.15.6',
@@ -87,7 +88,7 @@ if (!in_array($visitor_ip, $allowed_ips)) {
     <link rel="stylesheet" href="https://stackpath.bootstrapcdn.com/bootstrap/4.5.2/css/bootstrap.min.css">
     <link rel="stylesheet" href="https://cdn.datatables.net/1.13.7/css/dataTables.bootstrap4.min.css">
     <link rel="stylesheet" href="opredp/style.css">
-
+    <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/bootstrap-icons@1.11.1/font/bootstrap-icons.min.css">
 
 
 </head>
@@ -188,7 +189,7 @@ if (!in_array($visitor_ip, $allowed_ips)) {
     <script src="plugins/chart.js/Chart.min.js"></script>
 
     <script src="dist/js/pages/dashboard2.js"></script>
-
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/xlsx/0.18.5/xlsx.full.min.js"></script>
     <!-- <script src="https://cdn.datatables.net/1.13.7/js/jquery.dataTables.min.js"></script> -->
     <!-- <script src="https://cdn.datatables.net/1.13.7/js/dataTables.bootstrap4.min.js"></script> -->
 </body>

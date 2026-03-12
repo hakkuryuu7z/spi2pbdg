@@ -121,6 +121,24 @@
             </div>
         </div>
 
+        <div class="col-xl-12 mb-4">
+            <div class="card shadow-sm h-100 border-success">
+                <h5 class="card-header d-flex justify-content-between align-items-center bg-success text-white">
+                    <span class="glitch-text text-white" data-text="DATA EXPORT CENTER">DATA EXPORT CENTER</span>
+                </h5>
+                <div class="card-body d-flex flex-wrap gap-3">
+                    <button id="btn_export_barkos" class="btn btn-success flex-fill">
+                        <span class="spinner-border spinner-border-sm d-none" role="status" aria-hidden="true"></span>
+                        <i class="bi bi-file-earmark-spreadsheet"></i> <span class="button-text">Export BARKOS</span>
+                    </button>
+                    <button id="btn_export_produk" class="btn btn-info flex-fill text-white">
+                        <span class="spinner-border spinner-border-sm d-none" role="status" aria-hidden="true"></span>
+                        <i class="bi bi-file-earmark-spreadsheet"></i> <span class="button-text">Export PRODUK SERVEI</span>
+                    </button>
+                </div>
+            </div>
+        </div>
+
     </div>
 </div>
 
