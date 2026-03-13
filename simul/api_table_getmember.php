@@ -2,27 +2,30 @@
 header('Content-Type: application/json');
 include '../connection/index.php';
 
-// 1. Ambil Filter Tanggal (Format YYYY-MM-DD)
-// Jika kosong, pakai hari ini
 $filterTanggal = isset($_GET['tanggal']) ? $_GET['tanggal'] : date('Y-m-d');
-
-// Ambil format Bulan saja (YYYY-MM) dari tanggal tersebut untuk filter Achievement Bulanan
 $filterBulan = date('Y-m', strtotime($filterTanggal));
 
-// 2. Baca File target.json
-$jsonFile = 'target.json';
-$targetData = [];
+// 1. Baca File target bulanan (dari upload JSON)
+$jsonFile = 'target_bulanan.json';
+$targetGoalDariJSON = 0;
+
 if (file_exists($jsonFile)) {
     $jsonContent = file_get_contents($jsonFile);
-    $targetData = json_decode($jsonContent, true);
+    $targetDataList = json_decode($jsonContent, true);
+    foreach ($targetDataList as $row) {
+        if (isset($row['Bulan']) && $row['Bulan'] == $filterBulan) {
+            $targetGoalDariJSON = (int)$row['Total_Target'];
+            break;
+        }
+    }
 }
 
-// 3. Query SQL
-// Perhatikan bagian CASE WHEN untuk 'get_harian' menggunakan variabel $filterTanggal
+// 2. Query SQL (EXCLUDE ZAY)
 $sql = "
     SELECT 
         cus_nosalesman as mr,
-        COUNT(cus_kodemember) as jmlh_get,
+        COUNT(cus_kodemember) as total_member_all_time,
+        COUNT(CASE WHEN TO_CHAR(cus_tglregistrasi::date, 'YYYY-MM') = '$filterBulan' THEN 1 END) as jmlh_get_bulan_ini,
         COUNT(CASE WHEN cus_tglregistrasi::date = '$filterTanggal' THEN 1 END) as get_harian
     FROM 
         TBMASTER_CUSTOMER
@@ -30,12 +33,12 @@ $sql = "
         CUS_RECORDID IS NULL
         AND CUS_KODEIGR = '2P'
         AND CUS_NAMAKTP <> 'NEW'
-        AND TO_CHAR(cus_tglregistrasi::date, 'YYYY-MM') = '$filterBulan' 
         AND cus_kodemember != 'KLZVMJ'
+        AND cus_nosalesman != 'ZAY' 
     GROUP BY 
         cus_nosalesman
     ORDER BY 
-        count(cus_kodemember) DESC
+        COUNT(cus_kodemember) DESC
 ";
 
 $result = pg_query($conn, $sql);
@@ -45,25 +48,62 @@ if (!$result) {
     exit;
 }
 
-$data = [];
+$rawData = [];
+$totalMemberAreaAllTime = 0;
+$totalGetBulanIniArea = 0;
+$jumlahMR = pg_num_rows($result);
+
 while ($row = pg_fetch_assoc($result)) {
+    $rawData[] = $row;
+    $totalMemberAreaAllTime += (int)$row['total_member_all_time'];
+    $totalGetBulanIniArea += (int)$row['jmlh_get_bulan_ini'];
+}
+
+// 3. LOGIKA BARU: Hitung Total Member SEBELUM bulan ini dimulai
+// Tujuannya agar target yang didapat adalah FIX untuk satu bulan penuh
+$totalMemberSebelumBulanIni = $totalMemberAreaAllTime - $totalGetBulanIniArea;
+
+$targetAreaBulanIni = $targetGoalDariJSON - $totalMemberSebelumBulanIni;
+
+if ($targetAreaBulanIni < 0) {
+    $targetAreaBulanIni = 0;
+}
+
+// 4. BAGI RATA TARGET (Sekarang angkanya akan statis selama sebulan)
+$targetPerMR = 0;
+if ($jumlahMR > 0 && $targetAreaBulanIni > 0) {
+    $targetPerMR = ceil($targetAreaBulanIni / $jumlahMR);
+}
+
+$finalData = [];
+foreach ($rawData as $row) {
     $mrName = $row['mr'];
-    $target = isset($targetData[$mrName]) ? (int)$targetData[$mrName] : 80;
-    $realisasi = (int)$row['jmlh_get'];
+    $realisasiBulanIni = (int)$row['jmlh_get_bulan_ini'];
+    $totalAllTime = (int)$row['total_member_all_time'];
 
     $persen = 0;
-    if ($target > 0) {
-        $persen = round(($realisasi / $target) * 100);
+    if ($targetPerMR > 0) {
+        $persen = round(($realisasiBulanIni / $targetPerMR) * 100);
+    } else if ($targetPerMR == 0 && $realisasiBulanIni > 0) {
+        $persen = 100;
     }
 
-    $data[] = [
+    $finalData[] = [
         'mr' => $mrName,
-        'target' => $target,
-        'jmlh_get' => $realisasi,
-        'get_harian' => (int)$row['get_harian'], // Data sesuai tanggal filter
-        'persen' => $persen
+        'target' => $targetPerMR,
+        'jmlh_get' => $realisasiBulanIni,
+        'get_harian' => (int)$row['get_harian'],
+        'persen' => $persen,
+        'total_all_time' => $totalAllTime
     ];
 }
 
-echo json_encode($data);
+// FORMAT JSON BARU (Ada Summary dan Data)
+echo json_encode([
+    "summary" => [
+        "target_bulan_ini" => $targetGoalDariJSON,
+        "total_member_all_time" => $totalMemberAreaAllTime
+    ],
+    "data_mr" => $finalData
+]);
 pg_close($conn);
